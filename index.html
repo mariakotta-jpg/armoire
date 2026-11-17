@@ -15,14 +15,15 @@
 <link rel="manifest" href='data:application/manifest+json,{"name":"Armoire","short_name":"Armoire","display":"standalone","background_color":"%23F7F1E8","theme_color":"%23F7F1E8","start_url":".","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png"}]}'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Jost:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F7F1E8; --card:#FFFCF7; --ink:#2B1E19; --muted:#7A6A5E; --line:rgba(43,30,25,.12);
-  --forest:#2F4B3A; --forest-2:#456B57; --plum:#5B2A45; --plum-2:#7A3D5E; --plum-soft:#EADCE2;
-  --forest-soft:#DCE5DD; --cognac:#9A5B2E; --mustard:#C39A2E; --rust:#9E4426;
+  --forest:#888C70; --forest-2:#9CA088; --forest-ink:#5E6248; --plum:#5B2A45; --plum-2:#7A3D5E; --plum-soft:#EADCE2;
+  --forest-soft:#E8E9DE; --cognac:#9A5B2E; --mustard:#C39A2E; --rust:#9E4426;
   --good:#4E6B3A; --warn:#B07A1E; --bad:#9A2E2E;
   --serif:'Bodoni Moda', Didot, 'Bodoni 72', 'Times New Roman', serif;
+  --script:'Pinyon Script', 'Snell Roundhand', cursive;
   --sans:'Jost', -apple-system, system-ui, sans-serif;
   --r:18px; --nav:68px;
 }
@@ -38,6 +39,8 @@ a{color:var(--plum)}
 .kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
 h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0}
 h1{font-size:38px;line-height:1.02;letter-spacing:-.01em}
+.mast h1{font-family:var(--script);font-weight:400;font-size:50px;line-height:1.08;letter-spacing:0;color:var(--forest);padding:4px 0 2px}
+.mast h1 em{font-style:normal;color:var(--forest)}
 h1 em,h2 em{font-style:italic;color:var(--plum)}
 h2{font-size:26px;line-height:1.1;margin:26px 0 10px}
 h3{font-size:19px;margin:0 0 6px}
@@ -46,8 +49,8 @@ p{margin:.4em 0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:12px 0}
 .card.plum{background:var(--plum);color:#F6ECF0;border:none}
 .card.plum .kicker{color:#D9BFCB}
-.card.forest{background:var(--forest);color:#EEF3EE;border:none}
-.card.forest .kicker{color:#BFD3C4}
+.card.forest{background:var(--forest);color:#fff;border:none}
+.card.forest .kicker{color:#F1F2EA}
 .row{display:flex;gap:10px;align-items:center}
 .row.wrap{flex-wrap:wrap}
 .spacer{flex:1}
@@ -66,7 +69,7 @@ p{margin:.4em 0}
 .chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .chip.plum.on{background:var(--plum);border-color:var(--plum)}
-.tag{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--forest-soft);color:var(--forest);font-weight:500}
+.tag{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--forest-soft);color:var(--forest-ink);font-weight:500}
 .tag.plum{background:var(--plum-soft);color:var(--plum)}
 .tag.warn{background:#F3E6C8;color:#7A5410}
 .tag.bad{background:#F1D9D6;color:var(--bad)}
