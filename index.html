@@ -221,13 +221,18 @@ const CAT_IDS = CATS.map(c => c.id);
 const SLOT_NAMES = { outer: 'Jacke / Mantel', mid: 'Strick / Blazer', top: 'Oberteil', bottom: 'Unterteil', dress: 'Kleid', shoes: 'Schuhe', bag: 'Tasche' };
 const SLOT_IDS = Object.keys(SLOT_NAMES);
 const OCC = [
-  { id: 'buero', name: 'Büro', f: [3, 4] },
-  { id: 'pilates', name: 'Pilates', f: [1, 1] },
-  { id: 'home', name: 'Homeoffice', f: [1, 2] },
-  { id: 'bar', name: 'Bar-Abend', f: [3, 5] },
-  { id: 'restaurant', name: 'Restaurant & Café', f: [2, 4] },
-  { id: 'trip', name: 'Städtetrip', f: [2, 3] },
+  { id: 'buero', name: 'Büro', d: 'Arbeit, Meetings, Office-Tage', f: [3, 4] },
+  { id: 'lounge', name: 'Lounge', d: 'Zuhause, Homeoffice, Sonntag auf der Couch – Loungewear', f: [1, 2] },
+  { id: 'sport', name: 'Sport', d: 'Pilates, Yoga, Gym, Spaziergang', f: [1, 1] },
+  { id: 'stadt', name: 'Stadtbummel', d: 'In der Stadt bummeln, shoppen, Erledigungen, Städtetrip-Tage', f: [2, 3] },
+  { id: 'cafe', name: 'Café', d: 'Kaffee, Brunch, Treffen mit Freundinnen', f: [2, 3] },
+  { id: 'restaurant', name: 'Restaurant', d: 'Abendessen, schönes Lunch', f: [3, 4] },
+  { id: 'bar', name: 'Bar', d: 'Drinks, Ausgehen, Weinbar', f: [3, 5] },
+  { id: 'date', name: 'Date', d: 'Date-Night, Dinner zu zweit', f: [3, 5] },
+  { id: 'event', name: 'Event', d: 'Party, Geburtstag, Hochzeit, Theater – Overdressing erlaubt', f: [4, 5] },
 ];
+const OCC_MIGRATE = { pilates: ['sport'], home: ['lounge'], trip: ['stadt'], restaurant_old: ['restaurant', 'cafe'] };
+const OCC_LINE = 'Anlässe: ' + 'Büro, Lounge/Zuhause, Sport (Pilates), Stadtbummel & Shopping, Café, Restaurant, Bar, Date, Event & Feier.';
 const OCCM = Object.fromEntries(OCC.map(o => [o.id, o]));
 const OCC_IDS = OCC.map(o => o.id);
 const SEASONS = [{ id: 'fs', name: 'Frühling/Sommer' }, { id: 'hw', name: 'Herbst/Winter' }];
@@ -237,7 +242,7 @@ const WARMTH = ['', 'sehr leicht', 'leicht', 'mittel', 'warm', 'sehr warm'];
 
 const DEFAULT_PROFILE = `Stil: Casual Chic. Liebt es, sich schick zu machen und gerne auch zu overdressen (hat dafür aktuell noch zu wenig Teile), trägt aber auch gern bequeme Streetwear.
 Farbtyp: Deep Autumn – gedeckte, warme, tiefe Farben. Ideal: Schokobraun, Espresso, Cognac, Camel, Rost, Terrakotta, Senf, Olive, Waldgrün, Petrol, Pflaume, Aubergine, Burgunder, Creme/Elfenbein statt Reinweiß. Ungünstig: Pastell, Neon, kühles Grau/Silber, Reinweiß, Fuchsia, Eisblau. Schwarz geht, Espresso schmeichelt mehr.
-Anlässe: Büro, Pilates, Homeoffice, Bar-Abende, Restaurants & Cafés, Städtetrips.
+${OCC_LINE}
 Capsule: saisonal (Frühling/Sommer, Herbst/Winter), aussortieren und gezielt Lücken füllen.
 Bewertung: ehrlich-direkt, keine Floskeln. Maßstab ist IHR Stil; Trends nur als leichter Bonus.`;
 
@@ -348,8 +353,31 @@ async function loadAll() {
     if (k === 'styleDNA') S.styleDNA = v;
     if (k === 'rejected') S.rejected = v;
   }
+  await migrateOccasions(kv);
   S.ui.capSeason = currentSeason();
   bump();
+}
+async function migrateOccasions(kv) {
+  if (kv.some(x => x.k === 'occVersion' && x.v >= 2)) return;
+  const one = o => (OCC_MIGRATE[o] || [o])[0];
+  for (const it of S.items) {
+    if (!it.occasions?.length) continue;
+    const next = [...new Set(it.occasions.flatMap(o => o === 'restaurant' ? OCC_MIGRATE.restaurant_old : (OCC_MIGRATE[o] || [o])))].filter(o => OCCM[o]);
+    if (next.join() !== it.occasions.join()) { it.occasions = next; await DB.put('items', it); }
+  }
+  for (const o of S.outfits) if (o.occasion && OCC_MIGRATE[o.occasion]) { o.occasion = one(o.occasion); await DB.put('outfits', o); }
+  for (const p of Object.values(S.plans)) if (p.occasion && OCC_MIGRATE[p.occasion]) { p.occasion = one(p.occasion); await DB.put('plans', p); }
+  for (const t of S.trips) {
+    let ch = false;
+    for (const e of t.plan || []) if (OCC_MIGRATE[e.occasion]) { e.occasion = one(e.occasion); ch = true; }
+    if (t.ev && 'pilates' in t.ev) { t.ev.sport = t.ev.pilates; delete t.ev.pilates; ch = true; }
+    if (ch) await DB.put('trips', t);
+  }
+  if (S.settings.profile) {
+    const np = S.settings.profile.replace(/^Anlässe:.*$/m, OCC_LINE);
+    if (np !== S.settings.profile) { S.settings.profile = np; await DB.put('kv', { k: 'settings', v: S.settings }); }
+  }
+  await DB.put('kv', { k: 'occVersion', v: 2 });
 }
 function bump() { S.version++; _validCache = null; }
 function enrich(it) {
@@ -535,7 +563,7 @@ const ITEM_FIELDS = {
 const ITEM_RULES = `Kategorien (cat): ${CATS.map(c => c.id + '=' + c.name).join(', ')}. Bei cat=sport zusätzlich sportSlot (top/bottom/shoes/outer/mid/bag). Strickpullover gehören zu top_l, Strickjacken & Blazer zu mid, Westen zu mid.
 name: kurzer deutscher Name, z. B. "Rippstrick-Pullover" oder "Weite Bundfaltenhose". colorName: deutscher Farbname. colorHex: Hauptfarbe als #RRGGBB.
 formality 1-5 (1 Sport/Lounge, 2 Casual/Street, 3 Smart Casual, 4 Chic, 5 Abend/Festlich). warmth 1-5 (1 sehr leicht … 5 sehr warm).
-seasons: fs (Frühling/Sommer), hw (Herbst/Winter) – beide wenn ganzjährig. occasions aus: ${OCC.map(o => o.id + '=' + o.name).join(', ')}.`;
+seasons: fs (Frühling/Sommer), hw (Herbst/Winter) – beide wenn ganzjährig. occasions aus: ${OCC.map(o => o.id + '=' + o.name + ' (' + o.d + ')').join(', ')}.`;
 function closetSummary(limit = 320, includeWishes = false) {
   return (includeWishes ? S.items : closet()).slice(0, limit).map(i =>
     `${i.id}|${CAT[i.cat]?.name || i.cat}${i.cat === 'sport' ? '/' + slotOf(i) : ''}|${i.name || ''}|${i.colorName || i._c.name}|${i.pattern || 'uni'}|F${i.formality || 2}|W${i.warmth || 3}|${(i.seasons || []).join('/')}${i.wish ? '|WUNSCH' : ''}`).join('\n');
@@ -637,8 +665,8 @@ function evaluate(items, ctx = {}) {
   if (ctx.occasion && OCCM[ctx.occasion]) {
     const [lo, hi] = OCCM[ctx.occasion].f; const avg = fs.reduce((a, b) => a + b, 0) / fs.length;
     let an = 10; if (avg < lo - 0.3) { an -= (lo - avg) * 3; notes.push(`Für ${OCCM[ctx.occasion].name} zu lässig.`); }
-    if (avg > hi + 0.3) { an -= (avg - hi) * 2.5; notes.push(ctx.occasion === 'bar' ? '' : `Für ${OCCM[ctx.occasion].name} etwas zu aufgebrezelt – aber Overdressing steht dir ja.`); }
-    if (ctx.occasion === 'pilates' && items.some(i => i.cat !== 'sport' && slotOf(i) !== 'shoes' && slotOf(i) !== 'bag' && slotOf(i) !== 'outer')) { an -= 4; notes.push('Fürs Pilates bitte Sportsachen.'); }
+    if (avg > hi + 0.3) { an -= (avg - hi) * 2.5; notes.push(['bar', 'date', 'event'].includes(ctx.occasion) ? '' : `Für ${OCCM[ctx.occasion].name} etwas zu aufgebrezelt – aber Overdressing steht dir ja.`); }
+    if (ctx.occasion === 'sport' && items.some(i => i.cat !== 'sport' && slotOf(i) !== 'shoes' && slotOf(i) !== 'bag' && slotOf(i) !== 'outer')) { an -= 4; notes.push('Zum Sport bitte Sportsachen.'); }
     parts.push({ name: 'Anlass', score: clamp(an, 1, 10) });
   }
   // Wetter
@@ -662,7 +690,8 @@ function candidatePool({ occasion, temp, season, includeWishes = false, pool } =
   let p = pool || (includeWishes ? S.items : closet());
   const ss = season || (temp != null ? (temp >= 17 ? 'fs' : 'hw') : null);
   if (ss) p = p.filter(i => !i.seasons?.length || i.seasons.includes(ss));
-  if (occasion === 'pilates') p = p.filter(i => i.cat === 'sport' || (slotOf(i) === 'shoes' && (i.formality || 2) <= 2) || slotOf(i) === 'bag' || slotOf(i) === 'outer');
+  if (occasion === 'lounge') return p;
+  if (occasion === 'sport') p = p.filter(i => i.cat === 'sport' || (slotOf(i) === 'shoes' && (i.formality || 2) <= 2) || slotOf(i) === 'bag' || slotOf(i) === 'outer');
   else p = p.filter(i => i.cat !== 'sport' || ['shoes', 'bag', 'outer'].includes(slotOf(i)));
   return p;
 }
@@ -678,7 +707,7 @@ function suggest({ occasion, temp, season, n = 3, locked = {}, includeWishes = f
   for (let k = 0; k < tries; k++) {
     const out = {};
     for (const [s, it] of Object.entries(locked)) if (it !== undefined) out[s] = it;
-    const useDress = locked.dress ? true : (locked.top || locked.bottom) ? false : (canDress && (!canTB || Math.random() < (occasion === 'bar' ? 0.4 : 0.22)));
+    const useDress = locked.dress ? true : (locked.top || locked.bottom) ? false : (canDress && (!canTB || Math.random() < (['bar', 'date', 'event'].includes(occasion) ? 0.4 : 0.22)));
     if (useDress) { out.dress = out.dress || pick(P('dress')); delete out.top; delete out.bottom; }
     else {
       delete out.dress;
@@ -690,7 +719,7 @@ function suggest({ occasion, temp, season, n = 3, locked = {}, includeWishes = f
     const coreW = Math.max(...core.map(i => i.warmth || 3));
     if (!('mid' in out) && g.mid.length) { const want = need ? need > coreW && Math.random() < 0.8 : Math.random() < 0.35; if (want || occasion === 'buero' && Math.random() < .5) { const c = P('mid').filter(m => allCompat(m, core)); if (c.length) out.mid = pick(c); } }
     if (!('outer' in out) && g.outer.length && need && need >= 4) { const c = g.outer.filter(m => allCompat(m, core)); if (c.length) out.outer = pick(c); }
-    if (!('bag' in out) && g.bag.length && !['home', 'pilates'].includes(occasion) && Math.random() < 0.85) { const c = P('bag').filter(m => allCompat(m, core)); if (c.length) out.bag = pick(c); }
+    if (!('bag' in out) && g.bag.length && !['lounge', 'sport'].includes(occasion) && Math.random() < 0.85) { const c = P('bag').filter(m => allCompat(m, core)); if (c.length) out.bag = pick(c); }
     const items = SLOT_IDS.map(s => out[s]).filter(Boolean);
     const ck = comboKey(items); if (rej.has(ck)) continue;
     const key = items.map(i => i.id).sort().join(','); if (seen.has(key)) continue; seen.add(key);
@@ -807,7 +836,7 @@ routes.heute = async () => {
   const v = view(); const d = new Date();
   v.innerHTML = `<header class="mast"><div class="kicker">${fmtLong(d)}</div><h1>Le Look<br><em>du jour</em></h1></header>
   <div id="wx"></div>
-  <div class="chips" id="occ">${OCC.map(o => `<button class="chip plum ${o.id === S.ui.occ ? 'on' : ''}" data-o="${o.id}">${o.name}</button>`).join('')}</div>
+  <div class="chips" id="occ">${OCC.map(o => `<button class="chip plum ${o.id === S.ui.occ ? 'on' : ''}" data-o="${o.id}" title="${o.d}">${o.name}</button>`).join('')}</div>
   <div id="planned"></div><div id="sugg"></div>
   <h2>Kurz <em>gefragt</em></h2>
   <div class="grid2">
@@ -1077,7 +1106,7 @@ function fieldsHTML(it) {
   <label class="f">Wie schick? · <span data-lbl="formality">${FORMALITY[it.formality]}</span></label><input type="range" min="1" max="5" step="1" data-f="formality" value="${it.formality}">
   <label class="f">Wie warm? · <span data-lbl="warmth">${WARMTH[it.warmth]}</span></label><input type="range" min="1" max="5" step="1" data-f="warmth" value="${it.warmth}">
   <label class="f">Saison</label><div class="seg" data-multi="seasons">${SEASONS.map(s => `<button type="button" data-v="${s.id}" class="${it.seasons?.includes(s.id) ? 'on' : ''}">${s.name}</button>`).join('')}</div>
-  <label class="f">Anlässe</label><div class="seg" data-multi="occasions">${OCC.map(o => `<button type="button" data-v="${o.id}" class="${it.occasions?.includes(o.id) ? 'on' : ''}">${o.name}</button>`).join('')}</div>
+  <label class="f">Anlässe</label><div class="seg" data-multi="occasions">${OCC.map(o => `<button type="button" data-v="${o.id}" title="${o.d}" class="${it.occasions?.includes(o.id) ? 'on' : ''}">${o.name}</button>`).join('')}</div>
   <div class="grid2"><div><label class="f">Marke</label><input class="in" data-f="brand" value="${esc(it.brand || '')}"></div><div><label class="f">Preis (€)</label><input class="in" data-f="price" inputmode="decimal" value="${it.price ?? ''}"></div></div>
   ${it.wish ? `<label class="f">Link</label><input class="in" data-f="link" value="${esc(it.link || '')}" placeholder="https://…">` : ''}
   <label class="f">Notiz</label><textarea class="in" data-f="notes">${esc(it.notes || '')}</textarea>`;
@@ -1169,7 +1198,7 @@ routes.studio = async () => {
   const current = () => ROWS().map(s => pools[s]?.[state.idx[s] ?? 0]).filter(Boolean);
   const lockSVG = on => `<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="${on ? 'M8 11V7a4 4 0 0 1 8 0v4' : 'M8 11V7a4 4 0 0 1 7.5-2'}"/></svg>`;
   v.innerHTML = `<header class="mast" style="padding-bottom:4px"><div class="kicker">Wischen · Festhalten · Mischen</div><h1>Le <em>Studio</em></h1></header>
-    <div class="chips" id="sOcc"><button class="chip plum ${!state.occasion ? 'on' : ''}" data-o="">Alle Anlässe</button>${OCC.map(o => `<button class="chip plum ${o.id === state.occasion ? 'on' : ''}" data-o="${o.id}">${o.name}</button>`).join('')}</div>
+    <div class="chips" id="sOcc"><button class="chip plum ${!state.occasion ? 'on' : ''}" data-o="">Alle Anlässe</button>${OCC.map(o => `<button class="chip plum ${o.id === state.occasion ? 'on' : ''}" data-o="${o.id}" title="${o.d}">${o.name}</button>`).join('')}</div>
     <div class="chips" style="padding-top:0"><button class="chip ${state.dress ? 'on' : ''}" id="tDress">Kleid statt Ober-/Unterteil</button><button class="chip ${state.includeWishes ? 'on' : ''}" id="tWish">Wunschteile anprobieren</button><button class="chip" id="tLooks">Meine Looks</button></div>
     <div id="rows"></div>
     <div class="studio-bar"><div class="sc" id="sc">–</div><div class="small muted" id="scn" style="flex:1;line-height:1.2;max-height:2.4em;overflow:hidden"></div>
@@ -1567,12 +1596,12 @@ routes.reisen = () => {
 };
 function tripForm() {
   const d0 = new Date(); d0.setDate(d0.getDate() + 7); const d1 = new Date(d0); d1.setDate(d1.getDate() + 3);
-  const f = { city: null, start: iso(d0), end: iso(d1), ev: { restaurant: 2, bar: 1, buero: 0, pilates: 0 } };
+  const f = { city: null, start: iso(d0), end: iso(d1), ev: { restaurant: 2, bar: 1, date: 0, event: 0, buero: 0, sport: 0 } };
   const sh = openSheet(`<h2>Neue <em>Reise</em></h2>
     <label class="f">Stadt</label><input class="in" id="cq" placeholder="z. B. Paris"><div id="cr"></div>
     <div class="grid2"><div><label class="f">Von</label><input type="date" class="in" id="ds" value="${f.start}"></div><div><label class="f">Bis</label><input type="date" class="in" id="de" value="${f.end}"></div></div>
     <label class="f">Was steht an? (neben Sightseeing)</label>
-    ${[['restaurant', 'Restaurant-Abende'], ['bar', 'Bar-Abende'], ['buero', 'Business-Termine'], ['pilates', 'Pilates / Sport']].map(([k, n]) => `<div class="row" style="padding:6px 0"><span style="flex:1">${n}</span><button class="iconbtn" data-m="${k}">−</button><b id="c_${k}" style="width:24px;text-align:center">${f.ev[k]}</b><button class="iconbtn" data-p="${k}">+</button></div>`).join('')}
+    ${[['restaurant', 'Restaurant-Abende'], ['bar', 'Bar-Abende'], ['date', 'Dates'], ['event', 'Events / Feiern'], ['buero', 'Business-Termine'], ['sport', 'Sport / Pilates']].map(([k, n]) => `<div class="row" style="padding:6px 0"><span style="flex:1">${n}</span><button class="iconbtn" data-m="${k}">−</button><b id="c_${k}" style="width:24px;text-align:center">${f.ev[k]}</b><button class="iconbtn" data-p="${k}">+</button></div>`).join('')}
     <button class="btn primary block" id="plan" style="margin-top:14px">Packliste erstellen</button><div id="pr"></div>`);
   let tmr = null;
   $('#cq', sh.el).oninput = e => { clearTimeout(tmr); const q = e.target.value.trim(); if (q.length < 2) return; tmr = setTimeout(async () => { const r = await geocode(q).catch(() => []); $('#cr', sh.el).innerHTML = r.map((c, i) => `<div class="list-item" data-c="${i}"><div><b>${esc(c.name)}</b> <span class="small muted">${esc(c.region)}</span></div></div>`).join(''); $('#cr', sh.el).onclick = ev => { const b = ev.target.closest('[data-c]'); if (!b) return; f.city = r[+b.dataset.c]; $('#cq', sh.el).value = f.city.name; $('#cr', sh.el).innerHTML = ''; }; }, 350); };
@@ -1604,14 +1633,14 @@ async function planTrip(f) {
     } catch (e) { }
   }
   // Ereignisse verteilen
-  const events = dates.map(k => ({ date: k, slot: 'Tag', occasion: 'trip', temp: temps[k]?.feel ?? null }));
+  const events = dates.map(k => ({ date: k, slot: 'Tag', occasion: 'stadt', temp: temps[k]?.feel ?? null }));
   const evenings = []; for (const [occ, n] of Object.entries(f.ev)) for (let i = 0; i < n; i++) evenings.push(occ);
-  const order = evenings.filter(o => o === 'restaurant' || o === 'bar'); const dayEv = evenings.filter(o => o === 'buero' || o === 'pilates');
+  const order = evenings.filter(o => ['restaurant', 'bar', 'date', 'event'].includes(o)); const dayEv = evenings.filter(o => o === 'buero' || o === 'sport');
   order.forEach((o, i) => { const k = dates[(dates.length - 1 - i % dates.length + dates.length) % dates.length]; const tm = temps[k]; events.push({ date: k, slot: 'Abend', occasion: o, temp: tm ? tm.min + (tm.max - tm.min) * 0.35 : null }); });
-  dayEv.forEach((o, i) => { const k = dates[i % dates.length]; const tm = temps[k]; events.push({ date: k, slot: o === 'pilates' ? 'Morgens' : 'Termin', occasion: o, temp: tm?.feel ?? null }); });
+  dayEv.forEach((o, i) => { const k = dates[i % dates.length]; const tm = temps[k]; events.push({ date: k, slot: o === 'sport' ? 'Morgens' : 'Termin', occasion: o, temp: tm?.feel ?? null }); });
   events.sort((a, b) => a.date.localeCompare(b.date) || ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(a.slot) - ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(b.slot));
   const packed = new Set(); const plan = [];
-  const prio = [...events].sort((a, b) => (a.occasion === 'trip' ? 1 : 0) - (b.occasion === 'trip' ? 1 : 0));
+  const prio = [...events].sort((a, b) => (a.occasion === 'stadt' ? 1 : 0) - (b.occasion === 'stadt' ? 1 : 0));
   const limit = { shoes: 3, bag: 2, outer: 1 };
   for (const ev of prio) {
     const res = suggest({ occasion: ev.occasion, temp: ev.temp, n: 1, prefer: packed, tries: 350 });
@@ -1625,7 +1654,7 @@ async function planTrip(f) {
   }
   plan.sort((a, b) => a.date.localeCompare(b.date) || ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(a.slot) - ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(b.slot));
   const n = dates.length; const minT = Math.min(...Object.values(temps).map(t => t.min ?? 10));
-  const extras = [`Unterwäsche (${n + 1}×)`, `Socken (${n + 1}×)`, 'Schlafsachen', 'Kulturbeutel & Make-up', 'Schmuck', 'Ladekabel & Powerbank', 'Ausweis & Karten', ...(f.ev.pilates ? ['Pilates-Socken & Leggings', 'Haargummi'] : []), ...(minT < 6 ? ['Schal, Mütze, Handschuhe'] : []), ...(Object.values(temps).some(t => [61, 63, 65, 80, 81, 82].includes(t.code)) ? ['Schirm'] : []), ...(Object.values(temps).some(t => t.max > 24) ? ['Sonnenbrille & Sonnencreme'] : [])];
+  const extras = [`Unterwäsche (${n + 1}×)`, `Socken (${n + 1}×)`, 'Schlafsachen', 'Kulturbeutel & Make-up', 'Schmuck', 'Ladekabel & Powerbank', 'Ausweis & Karten', ...(f.ev.sport ? ['Sportsachen & Pilates-Socken', 'Haargummi'] : []), ...(minT < 6 ? ['Schal, Mütze, Handschuhe'] : []), ...(Object.values(temps).some(t => [61, 63, 65, 80, 81, 82].includes(t.code)) ? ['Schirm'] : []), ...(Object.values(temps).some(t => t.max > 24) ? ['Sonnenbrille & Sonnencreme'] : [])];
   return { id: uid(), city: f.city, start: f.start, end: f.end, ev: f.ev, days: dates, temps, source, plan, packed: [...packed], extras, checked: [] };
 }
 function tripSheet(t) {
