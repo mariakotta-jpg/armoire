@@ -1,0 +1,1750 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Armoire</title>
+<meta name="description" content="Dein Kleiderschrank, deine Outfits, deine Capsule.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Armoire">
+<meta name="theme-color" content="#F7F1E8">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Armoire","short_name":"Armoire","display":"standalone","background_color":"%23F7F1E8","theme_color":"%23F7F1E8","start_url":".","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png"}]}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F1E8; --card:#FFFCF7; --ink:#2B1E19; --muted:#7A6A5E; --line:rgba(43,30,25,.12);
+  --forest:#2F4B3A; --forest-2:#456B57; --plum:#5B2A45; --plum-2:#7A3D5E; --plum-soft:#EADCE2;
+  --forest-soft:#DCE5DD; --cognac:#9A5B2E; --mustard:#C39A2E; --rust:#9E4426;
+  --good:#4E6B3A; --warn:#B07A1E; --bad:#9A2E2E;
+  --serif:'Bodoni Moda', Didot, 'Bodoni 72', 'Times New Roman', serif;
+  --sans:'Jost', -apple-system, system-ui, sans-serif;
+  --r:18px; --nav:68px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45}
+body{padding-top:env(safe-area-inset-top);padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 12px);min-height:100vh;overscroll-behavior-y:none}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{font-size:16px}
+img{display:block;max-width:100%}
+a{color:var(--plum)}
+#view{max-width:720px;margin:0 auto;padding:0 16px}
+.mast{padding:22px 0 10px}
+.kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0}
+h1{font-size:38px;line-height:1.02;letter-spacing:-.01em}
+h1 em,h2 em{font-style:italic;color:var(--plum)}
+h2{font-size:26px;line-height:1.1;margin:26px 0 10px}
+h3{font-size:19px;margin:0 0 6px}
+p{margin:.4em 0}
+.muted{color:var(--muted)} .small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:12px 0}
+.card.plum{background:var(--plum);color:#F6ECF0;border:none}
+.card.plum .kicker{color:#D9BFCB}
+.card.forest{background:var(--forest);color:#EEF3EE;border:none}
+.card.forest .kicker{color:#BFD3C4}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.spacer{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(min-width:600px){.grid3{grid-template-columns:repeat(4,1fr)}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--ink);background:transparent;border-radius:999px;padding:11px 18px;font-weight:500;font-size:15px;cursor:pointer;min-height:44px}
+.btn.primary{background:var(--plum);border-color:var(--plum);color:#fff}
+.btn.forest{background:var(--forest);border-color:var(--forest);color:#fff}
+.btn.ghost{border-color:var(--line)}
+.btn.small{padding:7px 13px;min-height:34px;font-size:13px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.plum.on{background:var(--plum);border-color:var(--plum)}
+.tag{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--forest-soft);color:var(--forest);font-weight:500}
+.tag.plum{background:var(--plum-soft);color:var(--plum)}
+.tag.warn{background:#F3E6C8;color:#7A5410}
+.tag.bad{background:#F1D9D6;color:var(--bad)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.15);vertical-align:middle}
+.lvl-good{color:var(--good)} .lvl-ok{color:var(--warn)} .lvl-bad{color:var(--bad)}
+/* items */
+.item{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;aspect-ratio:3/4;padding:8px;cursor:pointer;overflow:hidden}
+.item img{width:100%;height:100%;object-fit:contain}
+.item .badge{position:absolute;top:6px;left:6px}
+.item .cdot{position:absolute;top:8px;right:8px}
+.item .nm{position:absolute;left:0;right:0;bottom:0;font-size:11px;padding:4px 8px;background:linear-gradient(transparent,rgba(255,252,247,.95));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* collage */
+.collage{display:grid;grid-template-columns:1.25fr 1fr;gap:6px;background:var(--card);border-radius:14px;padding:10px;aspect-ratio:1/1}
+.collage .l,.collage .r{display:flex;flex-direction:column;gap:6px;min-height:0}
+.collage .cell{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.collage img{max-height:100%;max-width:100%;object-fit:contain}
+.score{font-family:var(--serif);font-size:44px;line-height:1;font-style:italic}
+.score small{font-size:18px;font-style:normal;color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--forest)}
+.note{padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.note:first-child{border-top:none}
+/* nav */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--nav) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(247,241,232,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);display:flex}
+nav.tabs button{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+nav.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.5}
+nav.tabs button.on{color:var(--plum)}
+nav.tabs button.center .ring{width:48px;height:48px;border-radius:50%;background:var(--plum);display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 6px 18px rgba(91,42,69,.35)}
+nav.tabs button.center svg{stroke:#fff}
+.fab{position:fixed;right:18px;bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 16px);z-index:25;width:58px;height:58px;border-radius:50%;background:var(--forest);color:#fff;border:none;font-size:30px;box-shadow:0 8px 22px rgba(47,75,58,.4);cursor:pointer}
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(43,30,25,.38);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:var(--paper);width:100%;max-width:720px;max-height:92vh;border-radius:22px 22px 0 0;overflow:auto;padding:10px 16px calc(24px + env(safe-area-inset-bottom));animation:up .25s ease-out;-webkit-overflow-scrolling:touch}
+.sheet .grab{width:42px;height:5px;border-radius:5px;background:var(--line);margin:4px auto 8px}
+.sheet .x{position:sticky;top:0;float:right;border:none;background:var(--card);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;z-index:2;border:1px solid var(--line)}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 18px);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;z-index:80;font-size:14px;max-width:90vw;text-align:center;animation:fade .2s}
+/* forms */
+label.f{display:block;margin:12px 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+input.in,select.in,textarea.in{width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 12px;outline:none}
+textarea.in{min-height:90px;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--plum)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+.seg button.on{background:var(--forest);border-color:var(--forest);color:#fff}
+/* studio */
+.studio-row{position:relative;margin:6px -16px}
+.studio-row .lbl{position:absolute;left:16px;top:4px;z-index:2;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.studio-row .lock{position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:3;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,252,247,.92);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.studio-row .lock.on{background:var(--plum);border-color:var(--plum);color:#fff}
+.studio-row .lock svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+.track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 calc(50% - var(--w)/2)}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:none;width:var(--w);height:var(--hgt);scroll-snap-align:center;display:flex;align-items:center;justify-content:center;opacity:.35;transition:opacity .2s, transform .2s;transform:scale(.86)}
+.slide.cur{opacity:1;transform:none}
+.slide img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(43,30,25,.14))}
+.slide .none{width:70%;height:70%;border:1.5px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;padding:6px}
+.studio-bar{position:sticky;bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 6px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:999px;display:flex;align-items:center;gap:6px;padding:6px 6px 6px 16px;margin-top:10px;box-shadow:0 8px 22px rgba(43,30,25,.10)}
+.studio-bar .sc{font-family:var(--serif);font-style:italic;font-size:26px;min-width:52px;cursor:pointer}
+.iconbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.iconbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.iconbtn.plum{background:var(--plum);border-color:var(--plum);color:#fff}
+/* misc */
+.list-item{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
+.list-item:first-child{border-top:none}
+.list-item .th{width:64px;height:80px;flex:none;background:var(--card);border-radius:10px;border:1px solid var(--line);padding:4px}
+.list-item .th img{width:100%;height:100%;object-fit:contain}
+.menu-tile{display:flex;flex-direction:column;gap:4px;padding:16px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);cursor:pointer;text-align:left;min-height:104px}
+.menu-tile .t{font-family:var(--serif);font-size:20px}
+.masonry{columns:2;column-gap:10px}
+.masonry>*{break-inside:avoid;margin-bottom:10px;border-radius:14px;overflow:hidden;cursor:pointer;background:var(--card)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .dh{font-size:11px;color:var(--muted);letter-spacing:.1em;padding:4px 0}
+.cal .d{aspect-ratio:1/1.15;border-radius:10px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:4px;font-size:13px;cursor:pointer;position:relative;overflow:hidden}
+.cal .d.today{border-color:var(--plum);border-width:2px}
+.cal .d.out{opacity:.3}
+.cal .d .mk{width:6px;height:6px;border-radius:50%;background:var(--forest);margin-top:3px}
+.cal .d .mk.worn{background:var(--plum)}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:10px 0}
+.prog>i{display:block;height:100%;background:var(--plum);transition:width .3s}
+.spin{width:28px;height:28px;border:2.5px solid var(--line);border-top-color:var(--plum);border-radius:50%;animation:rot .8s linear infinite;margin:18px auto}
+@keyframes rot{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:30px 10px;color:var(--muted)}
+.empty .big{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--ink);margin-bottom:6px}
+.swatch-row{display:flex;gap:4px;flex-wrap:wrap}
+.swatch-row span{width:22px;height:22px;border-radius:50%;border:1px solid rgba(0,0,0,.1)}
+.check{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.check input{width:22px;height:22px;accent-color:var(--forest)}
+.pastebox{border:1.5px dashed var(--plum);border-radius:14px;padding:18px;text-align:center;color:var(--plum);min-height:60px;outline:none}
+hr{border:none;border-top:1px solid var(--line);margin:16px 0}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<main id="view"></main>
+<nav class="tabs" id="tabs">
+  <button data-go="heute"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Heute</button>
+  <button data-go="schrank"><svg viewBox="0 0 24 24"><path d="M12 6a2 2 0 1 1 2-2M12 6v2l9 7a1.5 1.5 0 0 1-1 2.7H4a1.5 1.5 0 0 1-1-2.7l9-7"/></svg>Schrank</button>
+  <button data-go="studio" class="center"><span class="ring"><svg viewBox="0 0 24 24"><path d="M5 9l7-5 7 5M5 15l7 5 7-5M3 12h18"/></svg></span>Studio</button>
+  <button data-go="capsule"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="7"/><path d="M5 12h14"/></svg>Capsule</button>
+  <button data-go="mehr"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>Mehr</button>
+</nav>
+<input type="file" id="filePick" accept="image/*" multiple class="hide">
+<input type="file" id="filePickOne" accept="image/*" class="hide">
+<input type="file" id="fileJson" accept="application/json,.json" class="hide">
+
+<script type="module">
+/* =========================================================
+   Armoire – persönliche Kleiderschrank-PWA
+   Daten bleiben im Browser (IndexedDB). KI: Google Gemini (Gratis-Key).
+   ========================================================= */
+
+// ---------- Helfer ----------
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const iso = (d = new Date()) => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+const parseISO = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+const WDAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+const fmtLong = d => `${WDAYS[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]}`;
+const fmtShort = d => `${d.getDate()}.${d.getMonth() + 1}.`;
+const eur = n => (n == null || isNaN(n)) ? '–' : n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+const shuffleArr = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+function toast(msg, ms = 2600) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), ms);
+}
+
+// ---------- Konstanten ----------
+const CATS = [
+  { id: 'top_s', name: 'Oberteile kurz', slot: 'top' },
+  { id: 'top_l', name: 'Oberteile lang', slot: 'top' },
+  { id: 'mid', name: 'Strickjacken & Blazer', slot: 'mid' },
+  { id: 'outer', name: 'Jacken & Mäntel', slot: 'outer' },
+  { id: 'pants_l', name: 'Hosen lang', slot: 'bottom' },
+  { id: 'pants_s', name: 'Hosen kurz', slot: 'bottom' },
+  { id: 'skirt', name: 'Röcke', slot: 'bottom' },
+  { id: 'dress', name: 'Kleider', slot: 'dress' },
+  { id: 'shoes', name: 'Schuhe', slot: 'shoes' },
+  { id: 'bag', name: 'Taschen', slot: 'bag' },
+  { id: 'sport', name: 'Sportsachen', slot: null },
+];
+const CAT = Object.fromEntries(CATS.map(c => [c.id, c]));
+const CAT_IDS = CATS.map(c => c.id);
+const SLOT_NAMES = { outer: 'Jacke / Mantel', mid: 'Strick / Blazer', top: 'Oberteil', bottom: 'Unterteil', dress: 'Kleid', shoes: 'Schuhe', bag: 'Tasche' };
+const SLOT_IDS = Object.keys(SLOT_NAMES);
+const OCC = [
+  { id: 'buero', name: 'Büro', f: [3, 4] },
+  { id: 'pilates', name: 'Pilates', f: [1, 1] },
+  { id: 'home', name: 'Homeoffice', f: [1, 2] },
+  { id: 'bar', name: 'Bar-Abend', f: [3, 5] },
+  { id: 'restaurant', name: 'Restaurant & Café', f: [2, 4] },
+  { id: 'trip', name: 'Städtetrip', f: [2, 3] },
+];
+const OCCM = Object.fromEntries(OCC.map(o => [o.id, o]));
+const OCC_IDS = OCC.map(o => o.id);
+const SEASONS = [{ id: 'fs', name: 'Frühling/Sommer' }, { id: 'hw', name: 'Herbst/Winter' }];
+const PATTERNS = ['uni', 'gestreift', 'kariert', 'geblümt', 'gepunktet', 'animal', 'grafisch', 'strukturiert'];
+const FORMALITY = ['', 'Sportlich / Lounge', 'Casual / Street', 'Smart Casual', 'Chic', 'Abend / Festlich'];
+const WARMTH = ['', 'sehr leicht', 'leicht', 'mittel', 'warm', 'sehr warm'];
+
+const DEFAULT_PROFILE = `Stil: Casual Chic. Liebt es, sich schick zu machen und gerne auch zu overdressen (hat dafür aktuell noch zu wenig Teile), trägt aber auch gern bequeme Streetwear.
+Farbtyp: Deep Autumn – gedeckte, warme, tiefe Farben. Ideal: Schokobraun, Espresso, Cognac, Camel, Rost, Terrakotta, Senf, Olive, Waldgrün, Petrol, Pflaume, Aubergine, Burgunder, Creme/Elfenbein statt Reinweiß. Ungünstig: Pastell, Neon, kühles Grau/Silber, Reinweiß, Fuchsia, Eisblau. Schwarz geht, Espresso schmeichelt mehr.
+Anlässe: Büro, Pilates, Homeoffice, Bar-Abende, Restaurants & Cafés, Städtetrips.
+Capsule: saisonal (Frühling/Sommer, Herbst/Winter), aussortieren und gezielt Lücken füllen.
+Bewertung: ehrlich-direkt, keine Floskeln. Maßstab ist IHR Stil; Trends nur als leichter Bonus.`;
+
+// Deep-Autumn-Farbwelt
+const PAL_GOOD = [
+  ['Schokobraun', '#4A2C22'], ['Espresso', '#36251D'], ['Cognac', '#9A5B2E'], ['Rost', '#9E4426'], ['Terrakotta', '#B35A38'],
+  ['Senf', '#C39A2E'], ['Olive', '#5D6531'], ['Moosgrün', '#646A3A'], ['Waldgrün', '#2F4B3A'], ['Flaschengrün', '#234235'],
+  ['Petrol', '#1F4F5B'], ['Pflaume', '#5B2A45'], ['Aubergine', '#47243A'], ['Burgunder', '#6A1F2E'], ['Ziegelrot', '#A3392B'],
+  ['Camel', '#B08453'], ['Karamell', '#C08A4E'], ['Creme', '#EEE3CC'], ['Elfenbein', '#F1E8D6'], ['Haferbeige', '#D9C7A7'],
+  ['Taupe', '#85725F'], ['Khaki', '#8C8456'], ['Kupfer', '#B0683A'], ['Bronze', '#8C6A3A'], ['Kürbis', '#C2662D'],
+  ['Dunkle Jeans', '#2C3A52'], ['Tomatenrot', '#A8322D'], ['Dunkeltürkis', '#1E5752'],
+];
+const PAL_OK = [
+  ['Schwarz', '#141414'], ['Marine', '#1F2A44'], ['Anthrazit', '#3A3A3A'], ['Jeansblau', '#4A6488'], ['Weiß', '#FAFAFA'],
+  ['Mittelgrau', '#8A8A8A'], ['Steingrau', '#9C9184'], ['Rosenholz', '#A8665F'], ['Altrosa', '#B98585'], ['Salbei', '#8F9A7A'],
+  ['Helle Jeans', '#7F9AB8'], ['Beige', '#E2D3BC'], ['Rot', '#B3202A'],
+];
+const PAL_BAD = [
+  ['Babyrosa', '#F6C9D0'], ['Babyblau', '#BCD6EE'], ['Flieder', '#CDB8E3'], ['Mint', '#BDE8D2'], ['Neongelb', '#E6F13A'],
+  ['Neonpink', '#FF3EA5'], ['Fuchsia', '#D9268C'], ['Eisblau', '#D7EEF7'], ['Silbergrau', '#C3C7CC'], ['Kühles Lila', '#7B4FC9'],
+  ['Königsblau', '#2448C9'], ['Neonorange', '#FF7A00'], ['Pastellgelb', '#F7EBA5'], ['Knalltürkis', '#18C6C6'], ['Hellgrau kühl', '#D9DCE0'],
+];
+
+// ---------- Farbmathematik ----------
+const hexToRgb = hex => { const n = parseInt((hex || '#888888').replace('#', '').padEnd(6, '0').slice(0, 6), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const rgbToHex = ([r, g, b]) => '#' + [r, g, b].map(v => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join('');
+function rgbToLab([r, g, b]) {
+  const f = c => { c /= 255; return c > 0.04045 ? Math.pow((c + 0.055) / 1.055, 2.4) : c / 12.92; };
+  const R = f(r), G = f(g), B = f(b);
+  let x = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047, y = R * 0.2126 + G * 0.7152 + B * 0.0722, z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883;
+  const g3 = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+  x = g3(x); y = g3(y); z = g3(z);
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+const dE = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+const labOf = hex => rgbToLab(hexToRgb(hex));
+const ALL_PAL = [...PAL_GOOD.map(p => [...p, 'good']), ...PAL_OK.map(p => [...p, 'ok']), ...PAL_BAD.map(p => [...p, 'bad'])].map(([n, h, l]) => ({ n, h, l, lab: labOf(h) }));
+
+function colorInfo(hex) {
+  const lab = labOf(hex); const [L, a, b] = lab;
+  const chroma = Math.hypot(a, b); let hue = Math.atan2(b, a) * 180 / Math.PI; if (hue < 0) hue += 360;
+  let best = null, bd = 1e9;
+  for (const p of ALL_PAL) { const d = dE(lab, p.lab); if (d < bd) { bd = d; best = p; } }
+  let level = best.l;
+  if (bd > 28) { // Heuristik für Farben außerhalb der Liste
+    if (L > 78 && chroma > 12 && chroma < 45) level = 'bad';         // Pastell
+    else if (chroma > 70 && L > 55) level = 'bad';                     // Neon / knallig
+    else if (L < 60 && chroma < 55 && (hue < 110 || hue > 300)) level = 'good'; // warm & gedeckt
+    else level = 'ok';
+  }
+  const denim = hue > 230 && hue < 290 && chroma > 8 && chroma < 40 && L > 20 && L < 65;
+  const neutral = chroma < 14 || (hue >= 25 && hue <= 95 && chroma < 42 && L < 82) || (L > 85 && chroma < 22) || denim;
+  return { lab, L, chroma, hue, name: best.n, level, neutral, dist: bd };
+}
+function colorNote(info) {
+  if (info.name === 'Schwarz' && info.level === 'ok') return 'Schwarz geht – Espresso oder Schokobraun schmeicheln dir aber mehr.';
+  if (info.name === 'Weiß' && info.level === 'ok') return 'Reinweiß ist hart für dich – Creme oder Elfenbein wirken weicher.';
+  if (info.level === 'good') return 'Steht dir – klassisch Deep Autumn.';
+  if (info.level === 'ok') return 'Geht – mit warmen, tiefen Tönen kombinieren und nicht direkt am Gesicht tragen.';
+  return 'Nicht dein Farbtyp – macht dich blass. Höchstens weit weg vom Gesicht (Hose, Schuhe).';
+}
+const LVL_ICON = { good: '✓', ok: '◐', bad: '✕' };
+const LVL_TXT = { good: 'steht dir', ok: 'geht', bad: 'eher nicht' };
+
+// ---------- IndexedDB ----------
+const DB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('armoire', 1);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        const keys = { items: 'id', outfits: 'id', plans: 'date', trips: 'id', kv: 'k', inspo: 'id' };
+        for (const [s, k] of Object.entries(keys)) if (!d.objectStoreNames.contains(s)) d.createObjectStore(s, { keyPath: k });
+      };
+      r.onsuccess = () => { this.db = r.result; res(); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  _req(store, mode, fn) {
+    return new Promise((res, rej) => {
+      const tx = this.db.transaction(store, mode); const q = fn(tx.objectStore(store));
+      tx.oncomplete = () => res(q && q.result); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error);
+    });
+  },
+  all(s) { return this._req(s, 'readonly', o => o.getAll()); },
+  put(s, v) { return this._req(s, 'readwrite', o => o.put(v)); },
+  del(s, k) { return this._req(s, 'readwrite', o => o.delete(k)); },
+  clear(s) { return this._req(s, 'readwrite', o => o.clear()); },
+};
+
+// ---------- Zustand ----------
+const S = {
+  items: [], outfits: [], plans: {}, trips: [], inspo: [],
+  settings: { apiKey: '', model: 'gemini-flash-latest', city: null, profile: DEFAULT_PROFILE },
+  styleDNA: null, rejected: [], pinsSeen: [],
+  ui: { occ: 'buero', cat: 'all', season: 'all', studio: null, capSeason: null, calMonth: null, inspoTab: 'pinterest' },
+  pins: null, weather: null, version: 0,
+};
+const kvSave = (k, v) => DB.put('kv', { k, v });
+async function loadAll() {
+  await DB.open();
+  const [items, outfits, plans, trips, kv, inspo] = await Promise.all(['items', 'outfits', 'plans', 'trips', 'kv', 'inspo'].map(s => DB.all(s)));
+  S.items = items.map(enrich); S.outfits = outfits; S.trips = trips; S.inspo = inspo;
+  S.plans = Object.fromEntries(plans.map(p => [p.date, p]));
+  for (const { k, v } of kv) {
+    if (k === 'settings') S.settings = { ...S.settings, ...v };
+    if (k === 'styleDNA') S.styleDNA = v;
+    if (k === 'rejected') S.rejected = v;
+  }
+  S.ui.capSeason = currentSeason();
+  bump();
+}
+function bump() { S.version++; _validCache = null; }
+function enrich(it) {
+  const info = colorInfo(it.color || '#888888');
+  Object.defineProperty(it, '_c', { value: info, enumerable: false, configurable: true, writable: true });
+  return it;
+}
+async function saveItem(it) {
+  enrich(it); const i = S.items.findIndex(x => x.id === it.id);
+  if (i >= 0) S.items[i] = it; else S.items.push(it);
+  bump(); await DB.put('items', stripPrivate(it));
+}
+function stripPrivate(it) { const o = {}; for (const k of Object.keys(it)) o[k] = it[k]; return o; }
+async function deleteItem(id) {
+  S.items = S.items.filter(x => x.id !== id); dropURL(id); bump(); await DB.del('items', id);
+}
+const closet = () => S.items.filter(i => !i.wish);
+const wishes = () => S.items.filter(i => i.wish);
+const slotOf = it => CAT[it.cat]?.slot || it.sportSlot || 'top';
+const itemById = id => S.items.find(i => i.id === id);
+function currentSeason(d = new Date()) { const m = d.getMonth(); return (m >= 3 && m <= 8) ? 'fs' : 'hw'; }
+
+// ---------- Bilder ----------
+const urlCache = new Map();
+function dropURL(id) { const u = urlCache.get(id); if (u) { URL.revokeObjectURL(u); urlCache.delete(id); } }
+function placeholder(hex = '#B08453', label = '') {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160"><rect width="120" height="160" rx="10" fill="#FFFCF7"/><circle cx="60" cy="66" r="34" fill="${hex}"/><text x="60" y="130" font-family="Georgia" font-style="italic" font-size="13" text-anchor="middle" fill="#7A6A5E">${esc(label).slice(0, 18)}</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+function imgURL(it) {
+  if (!it) return placeholder('#ccc', '?');
+  if (it.img instanceof Blob) {
+    if (!urlCache.has(it.id)) urlCache.set(it.id, URL.createObjectURL(it.img));
+    return urlCache.get(it.id);
+  }
+  return placeholder(it.color, it.name || 'Wunschteil');
+}
+async function blobToImage(blob) {
+  const url = URL.createObjectURL(blob);
+  const img = new Image(); img.src = url;
+  try { await img.decode(); } catch (e) { URL.revokeObjectURL(url); throw new Error('Bild konnte nicht gelesen werden'); }
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return img;
+}
+function canvasOf(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+const canvasBlob = (c, type = 'image/png', q = 0.9) => new Promise(r => c.toBlob(r, type, q));
+async function resizeBlob(blob, max = 1280, type = 'image/jpeg', q = 0.88, bg = null) {
+  const img = await blobToImage(blob); const w = img.naturalWidth, h = img.naturalHeight;
+  const s = Math.min(1, max / Math.max(w, h)); const c = canvasOf(Math.round(w * s), Math.round(h * s)); const x = c.getContext('2d');
+  if (bg) { x.fillStyle = bg; x.fillRect(0, 0, c.width, c.height); }
+  x.drawImage(img, 0, 0, c.width, c.height); return canvasBlob(c, type, q);
+}
+async function cropBlob(blob, box, pad = 0.05) { // box: [ymin,xmin,ymax,xmax] 0..1000
+  const img = await blobToImage(blob); const W = img.naturalWidth, H = img.naturalHeight;
+  let [y0, x0, y1, x1] = box.map(v => v / 1000);
+  const ph = (y1 - y0) * pad, pw = (x1 - x0) * pad;
+  y0 = clamp(y0 - ph, 0, 1); y1 = clamp(y1 + ph, 0, 1); x0 = clamp(x0 - pw, 0, 1); x1 = clamp(x1 + pw, 0, 1);
+  const sw = Math.max(8, (x1 - x0) * W), sh = Math.max(8, (y1 - y0) * H);
+  const s = Math.min(1, 1200 / Math.max(sw, sh)); const c = canvasOf(Math.round(sw * s), Math.round(sh * s));
+  c.getContext('2d').drawImage(img, x0 * W, y0 * H, sw, sh, 0, 0, c.width, c.height);
+  return canvasBlob(c, 'image/jpeg', 0.92);
+}
+async function trimTransparent(blob, max = 900) {
+  const img = await blobToImage(blob); const W = img.naturalWidth, H = img.naturalHeight;
+  const c = canvasOf(W, H); const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(img, 0, 0);
+  const d = x.getImageData(0, 0, W, H).data; let minX = W, minY = H, maxX = -1, maxY = -1;
+  for (let y = 0; y < H; y += 2) for (let xx = 0; xx < W; xx += 2) {
+    if (d[(y * W + xx) * 4 + 3] > 24) { if (xx < minX) minX = xx; if (xx > maxX) maxX = xx; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  }
+  if (maxX < 0) return { blob, empty: true };
+  const p = Math.round(Math.max(maxX - minX, maxY - minY) * 0.03);
+  minX = Math.max(0, minX - p); minY = Math.max(0, minY - p); maxX = Math.min(W - 1, maxX + p); maxY = Math.min(H - 1, maxY + p);
+  const cw = maxX - minX + 1, ch = maxY - minY + 1; const s = Math.min(1, max / Math.max(cw, ch));
+  const o = canvasOf(Math.round(cw * s), Math.round(ch * s)); o.getContext('2d').drawImage(c, minX, minY, cw, ch, 0, 0, o.width, o.height);
+  const coverage = (cw * ch) / (W * H);
+  return { blob: await canvasBlob(o, 'image/png'), empty: false, coverage };
+}
+async function dominantColor(blob) {
+  const img = await blobToImage(blob); const N = 64; const c = canvasOf(N, N); const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(img, 0, 0, N, N); const d = x.getImageData(0, 0, N, N).data; const px = []; let opaque = 0;
+  for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200) opaque++;
+  const hasAlpha = opaque < N * N * 0.97;
+  for (let y = 0; y < N; y++) for (let xx = 0; xx < N; xx++) {
+    const i = (y * N + xx) * 4;
+    if (hasAlpha ? d[i + 3] > 200 : (xx > N * .25 && xx < N * .75 && y > N * .2 && y < N * .8)) px.push([d[i], d[i + 1], d[i + 2]]);
+  }
+  if (!px.length) return '#888888';
+  let cs = [px[0], px[Math.floor(px.length / 2)], px[px.length - 1]].map(p => [...p]);
+  let groups = [];
+  for (let it = 0; it < 8; it++) {
+    groups = cs.map(() => []);
+    for (const p of px) { let bi = 0, bd = 1e9; cs.forEach((cc, k) => { const dd = (p[0] - cc[0]) ** 2 + (p[1] - cc[1]) ** 2 + (p[2] - cc[2]) ** 2; if (dd < bd) { bd = dd; bi = k; } }); groups[bi].push(p); }
+    cs = groups.map((g, k) => g.length ? [0, 1, 2].map(j => g.reduce((s, p) => s + p[j], 0) / g.length) : cs[k]);
+  }
+  let bi = 0; groups.forEach((g, k) => { if (g.length > groups[bi].length) bi = k; });
+  return rgbToHex(cs[bi]);
+}
+async function blobToB64(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer()); let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+async function imgPart(blob, max = 512) {
+  const j = await resizeBlob(blob, max, 'image/jpeg', 0.85, '#ffffff');
+  return { inlineData: { mimeType: 'image/jpeg', data: await blobToB64(j) } };
+}
+const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
+const dataURLToBlob = u => fetch(u).then(r => r.blob());
+
+// ---------- Freistellen (läuft im Browser, gratis) ----------
+let bgLib = null;
+async function removeBg(blob, onProgress) {
+  if (!bgLib) {
+    try { bgLib = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm'); }
+    catch (e) { console.error(e); throw new Error('Freistell-Modul konnte nicht geladen werden (Internet?)'); }
+  }
+  const input = await resizeBlob(blob, 1280, 'image/jpeg', 0.92);
+  const out = await bgLib.removeBackground(input, {
+    model: 'isnet_quint8', device: 'cpu', output: { format: 'image/png', quality: 0.9 },
+    progress: (key, cur, total) => { if (onProgress && key.startsWith('fetch')) onProgress(total ? cur / total : 0); },
+  });
+  const t = await trimTransparent(out);
+  if (t.empty) throw new Error('Kein Motiv gefunden');
+  return t.blob;
+}
+async function isTransparent(blob) {
+  const img = await blobToImage(blob); const c = canvasOf(32, 32); const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(img, 0, 0, 32, 32); const d = x.getImageData(0, 0, 32, 32).data; let t = 0;
+  for (let i = 3; i < d.length; i += 4) if (d[i] < 50) t++;
+  return t > 32 * 32 * 0.05;
+}
+
+// ---------- Gemini (Gratis-Stufe) ----------
+async function gemini({ parts, schema, system, tools, temperature = 0.6 }) {
+  const key = (S.settings.apiKey || '').trim();
+  if (!key) { const e = new Error('Für KI-Funktionen brauchst du einen kostenlosen Gemini-Schlüssel (Mehr → Einstellungen).'); e.code = 'NO_KEY'; throw e; }
+  const models = [...new Set([S.settings.model || 'gemini-flash-latest', 'gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'])];
+  let lastErr = null;
+  for (const m of models) {
+    const body = { contents: [{ role: 'user', parts }], generationConfig: { temperature } };
+    if (schema && !tools) { body.generationConfig.responseMimeType = 'application/json'; body.generationConfig.responseSchema = schema; }
+    if (system) body.systemInstruction = { parts: [{ text: system }] };
+    if (tools) body.tools = tools;
+    let r;
+    try {
+      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body),
+      });
+    } catch (e) { lastErr = new Error('Keine Verbindung zur KI.'); continue; }
+    if (r.status === 429) { lastErr = new Error('Tageslimit der Gratis-KI erreicht – probier es später nochmal.'); continue; }
+    if (r.status === 404 || r.status === 503 || r.status === 500) { lastErr = new Error(`Modell ${m} gerade nicht verfügbar.`); continue; }
+    if (r.status === 400 || r.status === 403) {
+      const t = await r.text();
+      if (/API key|API_KEY|permission/i.test(t)) throw new Error('Der Gemini-Schlüssel ist ungültig. Bitte in den Einstellungen prüfen.');
+      lastErr = new Error('KI-Anfrage abgelehnt: ' + t.slice(0, 160)); continue;
+    }
+    if (!r.ok) { lastErr = new Error('KI-Fehler ' + r.status); continue; }
+    const j = await r.json();
+    const txt = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
+    if (!txt) { lastErr = new Error('Leere KI-Antwort.'); continue; }
+    if (!schema) return txt;
+    try { return parseJSONLoose(txt); } catch (e) { lastErr = new Error('KI-Antwort nicht lesbar.'); continue; }
+  }
+  throw lastErr || new Error('KI nicht erreichbar.');
+}
+function parseJSONLoose(t) {
+  t = t.trim().replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+  try { return JSON.parse(t); } catch (e) {
+    const a = t.indexOf('{'), b = t.lastIndexOf('}'); if (a >= 0 && b > a) return JSON.parse(t.slice(a, b + 1)); throw e;
+  }
+}
+const SYS_STYLIST = () => `Du bist Moderedakteurin bei einem großen Modemagazin und die persönliche Stylistin deiner Kundin. Du sprichst Deutsch, duzt sie, bist eloquent, ein wenig verspielt – und vor allem ehrlich und direkt. Keine Floskeln, kein Schönreden: Wenn etwas nicht funktioniert, sag es klar und sag, wie es besser geht.
+Profil der Kundin:
+${S.settings.profile || DEFAULT_PROFILE}
+${S.styleDNA ? 'Ihre Stil-DNA (aus ihren Pinterest-Pins): ' + S.styleDNA.summary + ' Schlüsselteile: ' + (S.styleDNA.signatureItems || []).join(', ') + '.' : ''}`;
+const ITEM_FIELDS = {
+  cat: { type: 'STRING', enum: CAT_IDS }, sportSlot: { type: 'STRING', enum: SLOT_IDS },
+  name: { type: 'STRING' }, colorName: { type: 'STRING' }, colorHex: { type: 'STRING' },
+  pattern: { type: 'STRING', enum: PATTERNS }, formality: { type: 'INTEGER' }, warmth: { type: 'INTEGER' },
+  seasons: { type: 'ARRAY', items: { type: 'STRING', enum: ['fs', 'hw'] } },
+  occasions: { type: 'ARRAY', items: { type: 'STRING', enum: OCC_IDS } }, brand: { type: 'STRING' },
+};
+const ITEM_RULES = `Kategorien (cat): ${CATS.map(c => c.id + '=' + c.name).join(', ')}. Bei cat=sport zusätzlich sportSlot (top/bottom/shoes/outer/mid/bag). Strickpullover gehören zu top_l, Strickjacken & Blazer zu mid, Westen zu mid.
+name: kurzer deutscher Name, z. B. "Rippstrick-Pullover" oder "Weite Bundfaltenhose". colorName: deutscher Farbname. colorHex: Hauptfarbe als #RRGGBB.
+formality 1-5 (1 Sport/Lounge, 2 Casual/Street, 3 Smart Casual, 4 Chic, 5 Abend/Festlich). warmth 1-5 (1 sehr leicht … 5 sehr warm).
+seasons: fs (Frühling/Sommer), hw (Herbst/Winter) – beide wenn ganzjährig. occasions aus: ${OCC.map(o => o.id + '=' + o.name).join(', ')}.`;
+function closetSummary(limit = 320, includeWishes = false) {
+  return (includeWishes ? S.items : closet()).slice(0, limit).map(i =>
+    `${i.id}|${CAT[i.cat]?.name || i.cat}${i.cat === 'sport' ? '/' + slotOf(i) : ''}|${i.name || ''}|${i.colorName || i._c.name}|${i.pattern || 'uni'}|F${i.formality || 2}|W${i.warmth || 3}|${(i.seasons || []).join('/')}${i.wish ? '|WUNSCH' : ''}`).join('\n');
+}
+const CRIT_SCHEMA = {
+  type: 'OBJECT', properties: {
+    score: { type: 'NUMBER' }, headline: { type: 'STRING' }, verdict: { type: 'STRING' },
+    parts: { type: 'ARRAY', items: { type: 'OBJECT', properties: { name: { type: 'STRING' }, score: { type: 'NUMBER' }, comment: { type: 'STRING' } }, required: ['name', 'score', 'comment'] } },
+    swaps: { type: 'ARRAY', items: { type: 'OBJECT', properties: { removeId: { type: 'STRING' }, addId: { type: 'STRING' }, reason: { type: 'STRING' } }, required: ['addId', 'reason'] } },
+    missing: { type: 'ARRAY', items: { type: 'OBJECT', properties: { name: { type: 'STRING' }, cat: { type: 'STRING', enum: CAT_IDS }, colorHex: { type: 'STRING' }, reason: { type: 'STRING' } }, required: ['name', 'cat', 'reason'] } },
+    trend: { type: 'STRING' },
+  }, required: ['score', 'headline', 'verdict', 'parts', 'swaps', 'missing'],
+};
+
+// ---------- Stil-Regeln (lokal, ohne KI) ----------
+function seasonOK(a, b) { if (!a.seasons?.length || !b.seasons?.length) return true; return a.seasons.some(s => b.seasons.includes(s)); }
+function hueDiff(a, b) { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; }
+function pairScore(a, b) {
+  const pa = a.pattern && a.pattern !== 'uni' && a.pattern !== 'strukturiert', pb = b.pattern && b.pattern !== 'uni' && b.pattern !== 'strukturiert';
+  if (pa && pb) return 0.3;
+  const ca = a._c, cb = b._c;
+  if (ca.neutral || cb.neutral) return 1;
+  const hd = hueDiff(ca.hue, cb.hue);
+  if (hd <= 40) return 0.95;                 // Ton in Ton / analog
+  if (hd >= 140) return 0.85;                // komplementär (z. B. Grün + Pflaume)
+  if (ca.level === 'good' && cb.level === 'good' && ca.L < 60 && cb.L < 60) return 0.7; // tiefe Herbsttöne harmonieren
+  return 0.4;
+}
+function compat(a, b) {
+  if (!seasonOK(a, b)) return false;
+  if (Math.abs((a.formality || 2) - (b.formality || 2)) > 2) return false;
+  return pairScore(a, b) >= 0.5;
+}
+const allCompat = (x, arr) => arr.every(y => compat(x, y));
+function bySlot(pool) {
+  const o = { outer: [], mid: [], top: [], bottom: [], dress: [], shoes: [], bag: [] };
+  for (const it of pool) (o[slotOf(it)] || o.top).push(it);
+  return o;
+}
+let _validCache = null;
+function validCores(pool) {
+  const key = pool.map(i => i.id).join(',');
+  if (_validCache && _validCache.key === key) return _validCache.cores;
+  const g = bySlot(pool); const cores = [];
+  for (const t of g.top) for (const b of g.bottom) {
+    if (!compat(t, b)) continue;
+    const shoes = g.shoes.filter(s => compat(s, t) && compat(s, b));
+    if (shoes.length) cores.push({ items: [t, b], shoes });
+  }
+  for (const d of g.dress) { const shoes = g.shoes.filter(s => compat(s, d)); if (shoes.length) cores.push({ items: [d], shoes }); }
+  _validCache = { key, cores };
+  return cores;
+}
+function countOutfitsWith(x, poolIn) {
+  const pool = poolIn.filter(i => i.id !== x.id);
+  const g = bySlot(pool); const slot = slotOf(x); let n = 0;
+  if (slot === 'top' || slot === 'bottom') {
+    const other = slot === 'top' ? g.bottom : g.top;
+    for (const o of other) { if (!compat(x, o)) continue; n += g.shoes.filter(s => compat(s, x) && compat(s, o)).length; }
+  } else if (slot === 'dress') {
+    n = g.shoes.filter(s => compat(s, x)).length;
+  } else if (slot === 'shoes') {
+    for (const t of g.top) for (const b of g.bottom) if (compat(t, b) && compat(x, t) && compat(x, b)) n++;
+    for (const d of g.dress) if (compat(x, d)) n++;
+  } else {
+    for (const c of validCores(pool)) if (allCompat(x, c.items)) n += c.shoes.filter(s => compat(x, s)).length;
+  }
+  return n;
+}
+function neededWarmth(t) { if (t == null) return null; if (t >= 24) return 1; if (t >= 18) return 2; if (t >= 12) return 3; if (t >= 5) return 4; return 5; }
+function evaluate(items, ctx = {}) {
+  items = items.filter(Boolean); const notes = []; if (!items.length) return { total: 0, parts: [], notes: ['Noch nichts ausgewählt.'] };
+  const slots = items.map(slotOf);
+  // Farbe
+  let farbe = 10;
+  for (const it of items) {
+    const s = slotOf(it);
+    if (it._c.level === 'ok' && ['top', 'dress'].includes(s) && ['Schwarz', 'Weiß'].includes(it._c.name)) { farbe -= 0.5; notes.push(it._c.name === 'Schwarz' ? `Schwarz direkt am Gesicht ist okay – Espresso oder Schoko würden dich mehr strahlen lassen.` : `Reinweiß am Gesicht ist hart für dich – Creme wäre weicher.`); }
+    if (it._c.level === 'bad') { const nearFace = ['top', 'mid', 'outer', 'dress'].includes(s); farbe -= nearFace ? 3 : 1.5; notes.push(`${it.name || 'Ein Teil'} in ${it.colorName || it._c.name} ist nicht dein Deep-Autumn-Ton${nearFace ? ' – und dann noch direkt am Gesicht' : ''}.`); }
+  }
+  let worst = 1, wa = null, wb = null;
+  for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) { const p = pairScore(items[i], items[j]); if (p < worst) { worst = p; wa = items[i]; wb = items[j]; } }
+  if (worst < 0.5) { farbe -= 3; notes.push(`${wa.colorName || wa._c.name} und ${wb.colorName || wb._c.name} beißen sich${(wa.pattern !== 'uni' && wb.pattern !== 'uni') ? ' – zwei Muster sind eins zu viel' : ''}.`); }
+  const accents = items.filter(i => !i._c.neutral);
+  const hues = []; for (const a of accents) if (!hues.some(h => hueDiff(h, a._c.hue) < 30)) hues.push(a._c.hue);
+  if (hues.length > 2) { farbe -= 2; notes.push('Zu viele Farben auf einmal – maximal zwei Akzente, der Rest neutral.'); }
+  if (!accents.length && items.length >= 3) { farbe -= 0.5; notes.push('Alles neutral – elegant, aber ein Akzent in Pflaume, Rost oder Olive würde den Look heben.'); }
+  // Stimmigkeit
+  const fs = items.map(i => i.formality || 2); const spread = Math.max(...fs) - Math.min(...fs);
+  let stim = 10 - Math.max(0, spread - 1) * 2.5;
+  if (spread >= 3) { const hi = items[fs.indexOf(Math.max(...fs))], lo = items[fs.indexOf(Math.min(...fs))]; notes.push(`Stilbruch: ${hi.name || 'das schicke Teil'} und ${lo.name || 'das lässige Teil'} sprechen verschiedene Sprachen.`); }
+  else if (spread === 2) notes.push('Schöner High-Low-Mix – genau das macht Casual Chic aus.');
+  const pats = items.filter(i => i.pattern && !['uni', 'strukturiert'].includes(i.pattern)); if (pats.length > 1) stim -= 2;
+  if (!slots.includes('shoes')) { stim -= 1.5; notes.push('Ohne Schuhe ist kein Look fertig.'); }
+  if (!slots.includes('dress') && !(slots.includes('top') && slots.includes('bottom'))) { stim -= 2; notes.push('Es fehlt ein Ober- oder Unterteil.'); }
+  stim = clamp(stim, 1, 10);
+  const parts = [{ name: 'Farbe', score: clamp(farbe, 1, 10) }, { name: 'Stimmigkeit', score: stim }];
+  // Anlass
+  if (ctx.occasion && OCCM[ctx.occasion]) {
+    const [lo, hi] = OCCM[ctx.occasion].f; const avg = fs.reduce((a, b) => a + b, 0) / fs.length;
+    let an = 10; if (avg < lo - 0.3) { an -= (lo - avg) * 3; notes.push(`Für ${OCCM[ctx.occasion].name} zu lässig.`); }
+    if (avg > hi + 0.3) { an -= (avg - hi) * 2.5; notes.push(ctx.occasion === 'bar' ? '' : `Für ${OCCM[ctx.occasion].name} etwas zu aufgebrezelt – aber Overdressing steht dir ja.`); }
+    if (ctx.occasion === 'pilates' && items.some(i => i.cat !== 'sport' && slotOf(i) !== 'shoes' && slotOf(i) !== 'bag' && slotOf(i) !== 'outer')) { an -= 4; notes.push('Fürs Pilates bitte Sportsachen.'); }
+    parts.push({ name: 'Anlass', score: clamp(an, 1, 10) });
+  }
+  // Wetter
+  const need = neededWarmth(ctx.temp);
+  if (need) {
+    const layers = items.filter(i => ['top', 'mid', 'outer', 'dress'].includes(slotOf(i)));
+    const w = layers.length ? Math.max(...layers.map(i => i.warmth || 3)) + (layers.length - 1) * 0.6 : 1;
+    let we = 10 - Math.abs(w - need) * 2.2;
+    if (w < need - 0.8) notes.push(`Bei ${Math.round(ctx.temp)}° wirst du frieren – ${slots.includes('outer') ? 'wärmere Lage' : 'Jacke oder Mantel'} dazu.`);
+    if (w > need + 1.2) notes.push(`Für ${Math.round(ctx.temp)}° zu warm angezogen.`);
+    parts.push({ name: 'Wetter', score: clamp(we, 1, 10) });
+  }
+  const W = { Farbe: 0.35, Stimmigkeit: 0.3, Anlass: 0.2, Wetter: 0.15 };
+  const sw = parts.reduce((s, p) => s + W[p.name], 0);
+  let total = parts.reduce((s, p) => s + p.score * W[p.name], 0) / sw;
+  total = Math.round(total * 2) / 2;
+  return { total: clamp(total, 1, 10), parts, notes: notes.filter(Boolean) };
+}
+const comboKey = items => items.filter(i => ['top', 'bottom', 'dress'].includes(slotOf(i))).map(i => i.id).sort().join('+');
+function candidatePool({ occasion, temp, season, includeWishes = false, pool } = {}) {
+  let p = pool || (includeWishes ? S.items : closet());
+  const ss = season || (temp != null ? (temp >= 17 ? 'fs' : 'hw') : null);
+  if (ss) p = p.filter(i => !i.seasons?.length || i.seasons.includes(ss));
+  if (occasion === 'pilates') p = p.filter(i => i.cat === 'sport' || (slotOf(i) === 'shoes' && (i.formality || 2) <= 2) || slotOf(i) === 'bag' || slotOf(i) === 'outer');
+  else p = p.filter(i => i.cat !== 'sport' || ['shoes', 'bag', 'outer'].includes(slotOf(i)));
+  return p;
+}
+function suggest({ occasion, temp, season, n = 3, locked = {}, includeWishes = false, pool, prefer = null, tries = 400 } = {}) {
+  const g = bySlot(candidatePool({ occasion, temp, season, includeWishes, pool }));
+  const need = neededWarmth(temp);
+  const occ = OCCM[occasion]; const rej = new Set(S.rejected);
+  const results = []; const seen = new Set();
+  const fitOcc = i => !occ || ((i.formality || 2) >= occ.f[0] - 1 && (i.formality || 2) <= occ.f[1] + 1) || i.occasions?.includes(occasion);
+  const P = s => { const a = g[s].filter(fitOcc); return a.length ? a : g[s]; };
+  const canDress = P('dress').length > 0, canTB = P('top').length && P('bottom').length;
+  if (!P('shoes').length || (!canDress && !canTB)) return [];
+  for (let k = 0; k < tries; k++) {
+    const out = {};
+    for (const [s, it] of Object.entries(locked)) if (it !== undefined) out[s] = it;
+    const useDress = locked.dress ? true : (locked.top || locked.bottom) ? false : (canDress && (!canTB || Math.random() < (occasion === 'bar' ? 0.4 : 0.22)));
+    if (useDress) { out.dress = out.dress || pick(P('dress')); delete out.top; delete out.bottom; }
+    else {
+      delete out.dress;
+      if (!out.top) { const c = P('top').filter(t => !out.bottom || compat(t, out.bottom)); out.top = pick(c.length ? c : P('top')); }
+      if (!out.bottom) { const c = P('bottom').filter(b => compat(b, out.top)); out.bottom = pick(c.length ? c : P('bottom')); }
+    }
+    const core = [out.top, out.bottom, out.dress].filter(Boolean);
+    if (!('shoes' in out)) { const c = P('shoes').filter(s => allCompat(s, core)); out.shoes = pick(c.length ? c : P('shoes')); }
+    const coreW = Math.max(...core.map(i => i.warmth || 3));
+    if (!('mid' in out) && g.mid.length) { const want = need ? need > coreW && Math.random() < 0.8 : Math.random() < 0.35; if (want || occasion === 'buero' && Math.random() < .5) { const c = P('mid').filter(m => allCompat(m, core)); if (c.length) out.mid = pick(c); } }
+    if (!('outer' in out) && g.outer.length && need && need >= 4) { const c = g.outer.filter(m => allCompat(m, core)); if (c.length) out.outer = pick(c); }
+    if (!('bag' in out) && g.bag.length && !['home', 'pilates'].includes(occasion) && Math.random() < 0.85) { const c = P('bag').filter(m => allCompat(m, core)); if (c.length) out.bag = pick(c); }
+    const items = SLOT_IDS.map(s => out[s]).filter(Boolean);
+    const ck = comboKey(items); if (rej.has(ck)) continue;
+    const key = items.map(i => i.id).sort().join(','); if (seen.has(key)) continue; seen.add(key);
+    const ev = evaluate(items, { occasion, temp });
+    let sc = ev.total + Math.random() * 0.6;
+    if (prefer) sc += items.filter(i => prefer.has(i.id)).length / items.length * 2.2;
+    sc -= items.reduce((s, i) => s + Math.min(3, (i.wears || []).length) * 0.03, 0); // Abwechslung
+    results.push({ items, ev, sc, slots: out });
+  }
+  results.sort((a, b) => b.sc - a.sc);
+  const final = []; const usedCore = new Set();
+  for (const r of results) { const ck = comboKey(r.items); if (usedCore.has(ck)) continue; usedCore.add(ck); final.push(r); if (final.length >= n) break; }
+  return final;
+}
+
+// ---------- Wetter (Open-Meteo, gratis) ----------
+const WMO = { 0: ['Klar', '☀︎'], 1: ['Überwiegend klar', '☀︎'], 2: ['Teils bewölkt', '⛅︎'], 3: ['Bewölkt', '☁︎'], 45: ['Nebel', '〰'], 48: ['Nebel', '〰'], 51: ['Niesel', '☂'], 53: ['Niesel', '☂'], 55: ['Niesel', '☂'], 61: ['Regen', '☂'], 63: ['Regen', '☂'], 65: ['Starkregen', '☂'], 66: ['Eisregen', '☂'], 67: ['Eisregen', '☂'], 71: ['Schnee', '❄︎'], 73: ['Schnee', '❄︎'], 75: ['Starker Schnee', '❄︎'], 77: ['Schnee', '❄︎'], 80: ['Schauer', '☂'], 81: ['Schauer', '☂'], 82: ['Heftige Schauer', '☂'], 85: ['Schneeschauer', '❄︎'], 86: ['Schneeschauer', '❄︎'], 95: ['Gewitter', 'ϟ'], 96: ['Gewitter', 'ϟ'], 99: ['Gewitter', 'ϟ'] };
+const wmo = c => WMO[c] || ['–', '·'];
+async function geocode(q) {
+  const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=de&format=json`);
+  const j = await r.json(); return (j.results || []).map(x => ({ name: x.name, region: [x.admin1, x.country].filter(Boolean).join(', '), lat: x.latitude, lon: x.longitude }));
+}
+async function forecast(lat, lon) {
+  const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`);
+  if (!r.ok) throw new Error('Wetter nicht verfügbar'); return r.json();
+}
+async function pastYear(lat, lon, start, end) {
+  const sh = s => { const d = parseISO(s); d.setFullYear(d.getFullYear() - 1); return iso(d); };
+  const r = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${sh(start)}&end_date=${sh(end)}&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto`);
+  if (!r.ok) throw new Error('Klimadaten nicht verfügbar'); return r.json();
+}
+async function myWeather(force = false) {
+  const c = S.settings.city; if (!c) return null;
+  if (!force && S.weather && S.weather.key === c.lat + ',' + c.lon && Date.now() - S.weather.t < 30 * 60e3) return S.weather.data;
+  const data = await forecast(c.lat, c.lon); S.weather = { key: c.lat + ',' + c.lon, t: Date.now(), data }; return data;
+}
+function dayTemp(wx, date) {
+  if (!wx?.daily) return null; const i = wx.daily.time.indexOf(date); if (i < 0) return null;
+  return { max: wx.daily.temperature_2m_max[i], min: wx.daily.temperature_2m_min[i], code: wx.daily.weather_code[i], rain: wx.daily.precipitation_probability_max?.[i], feel: (wx.daily.temperature_2m_max[i] * 0.65 + wx.daily.temperature_2m_min[i] * 0.35) };
+}
+
+// ---------- Pinterest (über GitHub Action nach pins/pins.json) ----------
+async function loadPins() {
+  if (S.pins) return S.pins;
+  try { const r = await fetch('pins/pins.json?t=' + Math.floor(Date.now() / 3.6e6), { cache: 'no-cache' }); S.pins = r.ok ? await r.json() : { pins: [] }; }
+  catch (e) { S.pins = { pins: [] }; }
+  return S.pins;
+}
+
+// ---------- UI-Grundgerüst ----------
+const view = () => $('#view');
+const sheets = [];
+function openSheet(html, { onClose } = {}) {
+  const scrim = document.createElement('div'); scrim.className = 'scrim';
+  scrim.innerHTML = `<div class="sheet"><button class="x" aria-label="Schließen">✕</button><div class="grab"></div><div class="body"></div></div>`;
+  const body = $('.body', scrim); if (typeof html === 'string') body.innerHTML = html; else if (html) body.appendChild(html);
+  const close = () => { scrim.remove(); const i = sheets.indexOf(api); if (i >= 0) sheets.splice(i, 1); onClose && onClose(); };
+  scrim.addEventListener('click', e => { if (e.target === scrim) close(); });
+  $('.x', scrim).onclick = close;
+  document.body.appendChild(scrim);
+  const api = { el: body, close, scrim }; sheets.push(api); return api;
+}
+function closeAllSheets() { while (sheets.length) sheets[sheets.length - 1].close(); }
+function confirmSheet(text, okLabel = 'Ja', danger = false) {
+  return new Promise(res => {
+    let done = false;
+    const sh = openSheet(`<h3>${esc(text)}</h3><div class="row" style="margin-top:16px"><button class="btn ghost block" data-n>Abbrechen</button><button class="btn ${danger ? '' : 'primary'} block" data-y style="${danger ? 'background:var(--bad);color:#fff;border-color:var(--bad)' : ''}">${esc(okLabel)}</button></div>`, { onClose: () => { if (!done) res(false); } });
+    $('[data-n]', sh.el).onclick = () => { done = true; sh.close(); res(false); };
+    $('[data-y]', sh.el).onclick = () => { done = true; sh.close(); res(true); };
+  });
+}
+function pickFiles(multiple = true) {
+  return new Promise(res => {
+    const inp = multiple ? $('#filePick') : $('#filePickOne'); inp.value = '';
+    inp.onchange = () => res([...inp.files]); inp.click();
+  });
+}
+const routes = {};
+let current = 'heute';
+function go(name, opts = {}) {
+  closeAllSheets(); current = name;
+  const main = ['heute', 'schrank', 'studio', 'capsule'].includes(name) ? name : 'mehr';
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.go === main));
+  $$('.fab').forEach(f => f.remove());
+  window.scrollTo(0, 0);
+  try { history.replaceState(null, '', '#' + name); } catch (e) { }
+  Promise.resolve(routes[name](opts)).catch(e => { console.error(e); view().innerHTML = `<div class="card">Fehler: ${esc(e.message)}</div>`; });
+}
+$$('#tabs button').forEach(b => b.onclick = () => go(b.dataset.go));
+
+function itemCard(it, extra = '') {
+  return `<div class="item" data-id="${it.id}">${it.wish ? '<span class="badge tag plum">Wunsch</span>' : ''}<span class="cdot dot" style="background:${esc(it.color)}"></span><img loading="lazy" src="${imgURL(it)}" alt="">${extra || `<div class="nm">${esc(it.name || '')}</div>`}</div>`;
+}
+function collage(items) {
+  const L = items.filter(i => ['top', 'bottom', 'dress'].includes(slotOf(i)));
+  const R = items.filter(i => !['top', 'bottom', 'dress'].includes(slotOf(i)));
+  const cell = i => `<div class="cell"><img src="${imgURL(i)}" alt=""></div>`;
+  return `<div class="collage"><div class="l">${L.map(cell).join('')}</div><div class="r">${R.map(cell).join('') || ''}</div></div>`;
+}
+function scoreBlock(ev, { compact = false } = {}) {
+  return `<div class="row"><div class="score">${ev.total.toString().replace('.', ',')}<small>/10</small></div><div class="spacer"></div>
+  <div style="flex:1.6">${ev.parts.map(p => `<div class="small row" style="gap:8px"><span style="width:84px">${p.name}</span><div class="bar" style="flex:1"><i style="width:${p.score * 10}%"></i></div></div>`).join('')}</div></div>
+  ${compact ? '' : ev.notes.slice(0, 4).map(n => `<div class="note">${esc(n)}</div>`).join('')}`;
+}
+function emptyState(title, text, btn) {
+  return `<div class="empty"><div class="big">${title}</div><p>${text}</p>${btn || ''}</div>`;
+}
+function withSpinner(sh, text) { sh.el.innerHTML = `<div class="spin"></div><p class="muted" style="text-align:center">${esc(text)}</p>`; }
+
+// =========================================================
+// HEUTE
+// =========================================================
+routes.heute = async () => {
+  const v = view(); const d = new Date();
+  v.innerHTML = `<header class="mast"><div class="kicker">${fmtLong(d)}</div><h1>Le Look<br><em>du jour</em></h1></header>
+  <div id="wx"></div>
+  <div class="chips" id="occ">${OCC.map(o => `<button class="chip plum ${o.id === S.ui.occ ? 'on' : ''}" data-o="${o.id}">${o.name}</button>`).join('')}</div>
+  <div id="planned"></div><div id="sugg"></div>
+  <h2>Kurz <em>gefragt</em></h2>
+  <div class="grid2">
+    <button class="menu-tile" data-a="selfie"><span class="kicker">KI-Kritik</span><span class="t">Spiegelselfie bewerten</span></button>
+    <button class="menu-tile" data-a="studio"><span class="kicker">Clueless-Modus</span><span class="t">Selbst kombinieren</span></button>
+  </div>`;
+  $('#occ').onclick = e => { const b = e.target.closest('[data-o]'); if (!b) return; S.ui.occ = b.dataset.o; $$('#occ .chip').forEach(c => c.classList.toggle('on', c === b)); renderSugg(); };
+  $('[data-a=selfie]').onclick = rateSelfie; $('[data-a=studio]').onclick = () => go('studio');
+  let wx = null; const wxEl = $('#wx');
+  if (!S.settings.city) wxEl.innerHTML = `<div class="card row"><div><div class="kicker">Wetter</div><div>Lege deine Stadt fest – dann passen die Vorschläge zum Wetter.</div></div><button class="btn small" id="setCity">Stadt</button></div>`;
+  else wxEl.innerHTML = `<div class="card forest"><div class="spin" style="margin:4px auto;border-color:rgba(255,255,255,.2);border-top-color:#fff"></div></div>`;
+  $('#setCity')?.addEventListener('click', () => citySheet(() => go('heute')));
+  const temp = () => wx ? wx.current.apparent_temperature : null;
+  const plan = S.plans[iso()];
+  if (plan) {
+    const its = (plan.itemIds || []).map(itemById).filter(Boolean);
+    if (its.length) $('#planned').innerHTML = `<div class="card"><div class="kicker">${plan.worn ? 'Heute getragen' : 'Für heute geplant'}</div><div style="max-width:260px;margin-top:8px">${collage(its)}</div></div>`;
+  }
+  function renderSugg() {
+    const box = $('#sugg');
+    if (closet().length < 4) { box.innerHTML = emptyState('Dein Schrank wartet.', 'Füge zuerst ein paar Lieblingsteile hinzu – Oberteile, Hosen, Schuhe. Dann schlage ich dir jeden Morgen Looks vor.', `<button class="btn primary" id="goAdd">Teile hinzufügen</button>`); $('#goAdd').onclick = () => { go('schrank'); setTimeout(addSheet, 50); }; return; }
+    const res = suggest({ occasion: S.ui.occ, temp: temp(), n: 3 });
+    if (!res.length) { box.innerHTML = emptyState('Noch keine Kombi möglich.', `Für ${OCCM[S.ui.occ].name} fehlen mir passende Teile (mind. Ober- & Unterteil oder Kleid plus Schuhe in der Saison).`); return; }
+    box.innerHTML = res.map((r, i) => `<div class="card" data-i="${i}">${collage(r.items)}<div style="margin-top:10px">${scoreBlock(r.ev, { compact: true })}</div>
+      ${r.ev.notes[0] ? `<p class="small muted" style="margin-top:8px">${esc(r.ev.notes[0])}</p>` : ''}
+      <div class="row wrap" style="margin-top:10px"><button class="btn primary small" data-a="wear">Das trage ich</button><button class="btn small" data-a="studio">Im Studio</button><button class="btn ghost small" data-a="nope">Nicht mein Ding</button></div></div>`).join('');
+    box.onclick = async e => {
+      const b = e.target.closest('[data-a]'); if (!b) return; const r = res[+b.closest('[data-i]').dataset.i];
+      if (b.dataset.a === 'wear') { await markWorn(iso(), r.items.map(i => i.id)); toast('Notiert. Très chic.'); go('heute'); }
+      if (b.dataset.a === 'studio') { S.ui.studio = { preset: r.items.map(i => i.id), occasion: S.ui.occ }; go('studio'); }
+      if (b.dataset.a === 'nope') { S.rejected.push(comboKey(r.items)); await kvSave('rejected', S.rejected); toast('Verstanden – diese Kombi kommt nicht wieder.'); renderSugg(); }
+    };
+  }
+  renderSugg();
+  if (S.settings.city) {
+    try {
+      wx = await myWeather();
+      const t = dayTemp(wx, iso()) || {};
+      wxEl.innerHTML = `<div class="card forest row"><div style="font-size:34px;line-height:1">${wmo(wx.current.weather_code)[1]}</div>
+        <div><div class="kicker">${esc(S.settings.city.name)}</div><div style="font-family:var(--serif);font-size:26px">${Math.round(wx.current.temperature_2m)}° <span style="font-size:15px;opacity:.8">gefühlt ${Math.round(wx.current.apparent_temperature)}°</span></div>
+        <div class="small" style="opacity:.85">${wmo(wx.current.weather_code)[0]} · ${Math.round(t.min ?? 0)}° bis ${Math.round(t.max ?? 0)}°${t.rain != null ? ' · Regen ' + t.rain + '%' : ''}</div></div></div>`;
+      renderSugg();
+    } catch (e) { wxEl.innerHTML = `<div class="card small muted">Wetter gerade nicht erreichbar.</div>`; }
+  }
+};
+async function markWorn(date, itemIds, outfitId = null) {
+  const prev = S.plans[date];
+  if (prev?.worn) for (const id of prev.itemIds || []) { const it = itemById(id); if (it?.wears) { it.wears = it.wears.filter(d => d !== date); await saveItem(it); } }
+  const p = { date, itemIds, outfitId, worn: true }; S.plans[date] = p; await DB.put('plans', p);
+  for (const id of itemIds) { const it = itemById(id); if (!it) continue; it.wears = [...new Set([...(it.wears || []), date])].sort(); await saveItem(it); }
+}
+async function rateSelfie() {
+  const [f] = await pickFiles(false); if (!f) return;
+  const sh = openSheet(''); withSpinner(sh, 'Die Redaktion schaut sich deinen Look an …');
+  try {
+    const part = await imgPart(f, 1024);
+    const res = await gemini({
+      system: SYS_STYLIST(), schema: CRIT_SCHEMA, parts: [part, {
+        text: `Bewerte dieses Outfit-Foto (Spiegelselfie) ehrlich-direkt auf einer Skala von 1–10 (Dezimal erlaubt). Anlass: ${OCCM[S.ui.occ].name}.
+parts: bewerte Farbe (passt es zu Deep Autumn?), Silhouette & Proportion, Stil-Stimmigkeit, Anlass – jeweils 1-10 mit einem knackigen Satz.
+swaps: schlage bis zu 3 konkrete Teile AUS IHREM SCHRANK vor, die den Look verbessern würden (addId = ID aus der Liste, removeId leer lassen). Nur IDs aus der Liste!
+missing: bis zu 2 Teile, die ihr fehlen und diesen Look perfekt machen würden.
+trend: ein kurzer Satz, ob/wie es zu aktuellen Trends passt (nur als Bonus).
+headline: eine kurze, verspielte Magazin-Überschrift. verdict: 2-3 Sätze ehrliches Fazit.
+Ihr Schrank (id|Kategorie|Name|Farbe|Muster|Formalität|Wärme|Saison):
+${closetSummary()}` }],
+    });
+    renderCritique(sh, res, { photo: f });
+  } catch (e) { sh.el.innerHTML = `<h3>Hoppla</h3><p>${esc(e.message)}</p>`; }
+}
+function renderCritique(sh, res, { photo = null, onApplySwap = null } = {}) {
+  const swaps = (res.swaps || []).map(s => ({ ...s, add: itemById(s.addId), rem: s.removeId ? itemById(s.removeId) : null })).filter(s => s.add);
+  sh.el.innerHTML = `<div class="kicker">Die Redaktion urteilt</div><h2 style="margin-top:6px">${esc(res.headline || 'Das Urteil')}</h2>
+    ${photo ? `<img src="${URL.createObjectURL(photo)}" style="max-height:260px;border-radius:14px;margin:8px 0">` : ''}
+    <div class="card"><div class="score">${String(Math.round((res.score || 0) * 10) / 10).replace('.', ',')}<small>/10</small></div><p>${esc(res.verdict)}</p>
+    ${(res.parts || []).map(p => `<div class="note"><div class="row"><b>${esc(p.name)}</b><div class="spacer"></div><span class="small">${Math.round(p.score * 10) / 10}</span></div><div class="bar" style="margin:4px 0"><i style="width:${clamp(p.score, 0, 10) * 10}%"></i></div><div class="small">${esc(p.comment)}</div></div>`).join('')}</div>
+    ${swaps.length ? `<h3 style="margin-top:18px">Besser mit Teilen aus deinem Schrank</h3>${swaps.map((s, i) => `<div class="list-item" style="cursor:default">${s.rem ? `<div class="th"><img src="${imgURL(s.rem)}"></div><span>→</span>` : ''}<div class="th"><img src="${imgURL(s.add)}"></div><div style="flex:1"><b>${esc(s.add.name || '')}</b><div class="small muted">${esc(s.reason)}</div>${onApplySwap ? `<button class="btn small" data-sw="${i}" style="margin-top:6px">Tauschen</button>` : ''}</div></div>`).join('')}` : ''}
+    ${(res.missing || []).length ? `<h3 style="margin-top:18px">Das fehlt dir</h3>${res.missing.map((m, i) => `<div class="list-item" style="cursor:default"><span class="dot" style="width:28px;height:28px;background:${esc(m.colorHex || '#B08453')}"></span><div style="flex:1"><b>${esc(m.name)}</b><div class="small muted">${esc(m.reason)}</div></div><button class="btn small" data-mw="${i}">+ Wunsch</button></div>`).join('')}` : ''}
+    ${res.trend ? `<p class="small muted" style="margin-top:14px"><i>Trend-Notiz:</i> ${esc(res.trend)}</p>` : ''}`;
+  sh.el.onclick = async e => {
+    const sw = e.target.closest('[data-sw]'); if (sw && onApplySwap) { onApplySwap(swaps[+sw.dataset.sw]); sh.close(); }
+    const mw = e.target.closest('[data-mw]'); if (mw) { await addWishFromSuggestion(res.missing[+mw.dataset.mw]); mw.textContent = '✓'; mw.disabled = true; }
+  };
+}
+async function addWishFromSuggestion(m) {
+  const it = { id: uid(), wish: true, cat: CAT[m.cat] ? m.cat : 'top_l', name: m.name, color: /^#[0-9a-f]{6}$/i.test(m.colorHex || '') ? m.colorHex : '#B08453', colorName: '', pattern: 'uni', formality: 3, warmth: 3, seasons: [], occasions: [], created: iso(), wears: [], notes: m.reason || '' };
+  it.colorName = colorInfo(it.color).name;
+  await saveItem(it); toast('Auf die Wunschliste gesetzt.');
+}
+
+// =========================================================
+// SCHRANK
+// =========================================================
+routes.schrank = async () => {
+  const v = view(); const all = closet();
+  const counts = Object.fromEntries(CATS.map(c => [c.id, all.filter(i => i.cat === c.id).length]));
+  v.innerHTML = `<header class="mast"><div class="kicker">${all.length} Teile · ${wishes().length} Wünsche</div><h1>Mon <em>Armoire</em></h1></header>
+    <div class="chips" id="cats"><button class="chip ${S.ui.cat === 'all' ? 'on' : ''}" data-c="all">Alle</button>${CATS.map(c => `<button class="chip ${S.ui.cat === c.id ? 'on' : ''}" data-c="${c.id}">${c.name} <span class="muted">${counts[c.id] || ''}</span></button>`).join('')}</div>
+    <div class="chips" id="flt" style="padding-top:0">
+      ${[['all', 'Ganzjährig + alle'], ['fs', 'Frühling/Sommer'], ['hw', 'Herbst/Winter']].map(([k, n]) => `<button class="chip ${S.ui.season === k ? 'on' : ''}" data-s="${k}">${n}</button>`).join('')}
+      <button class="chip ${S.ui.lvl === 'bad' ? 'on' : ''}" data-l="bad">Nicht mein Farbtyp</button>
+      <button class="chip ${S.ui.lvl === 'never' ? 'on' : ''}" data-l="never">Nie getragen</button>
+    </div>
+    <div id="grid"></div>`;
+  const render = () => {
+    let list = closet();
+    if (S.ui.cat !== 'all') list = list.filter(i => i.cat === S.ui.cat);
+    if (S.ui.season !== 'all') list = list.filter(i => !i.seasons?.length || i.seasons.includes(S.ui.season));
+    if (S.ui.lvl === 'bad') list = list.filter(i => i._c.level === 'bad');
+    if (S.ui.lvl === 'never') list = list.filter(i => !(i.wears || []).length);
+    list.sort((a, b) => CAT_IDS.indexOf(a.cat) - CAT_IDS.indexOf(b.cat) || a._c.L - b._c.L);
+    $('#grid').innerHTML = list.length ? `<div class="grid3">${list.map(i => itemCard(i)).join('')}</div>` :
+      (closet().length ? emptyState('Nichts gefunden.', 'Für diesen Filter gibt es keine Teile.') : emptyState('Noch leer – noch.', 'Tippe auf das Plus. Du kannst einzelne Teile fotografieren, ein Spiegelselfie zerlegen lassen oder freigestellte Motive aus der Fotos-App einfügen.'));
+  };
+  $('#cats').onclick = e => { const b = e.target.closest('[data-c]'); if (!b) return; S.ui.cat = b.dataset.c; $$('#cats .chip').forEach(c => c.classList.toggle('on', c === b)); render(); };
+  $('#flt').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.s) { S.ui.season = b.dataset.s; $$('#flt [data-s]').forEach(c => c.classList.toggle('on', c === b)); }
+    if (b.dataset.l) { S.ui.lvl = S.ui.lvl === b.dataset.l ? null : b.dataset.l; $$('#flt [data-l]').forEach(c => c.classList.toggle('on', c.dataset.l === S.ui.lvl)); }
+    render();
+  };
+  $('#grid').onclick = e => { const c = e.target.closest('.item'); if (c) itemSheet(c.dataset.id, render); };
+  render();
+  const fab = document.createElement('button'); fab.className = 'fab'; fab.textContent = '+'; fab.onclick = addSheet; document.body.appendChild(fab);
+};
+
+function addSheet({ wish = false } = {}) {
+  const sh = openSheet(`<div class="kicker">${wish ? 'Wunschliste' : 'Neu im Schrank'}</div><h2 style="margin-top:4px">${wish ? 'Wunschteil <em>prüfen</em>' : 'Teile <em>hinzufügen</em>'}</h2>
+    <div class="list-item" data-a="photos"><div class="th" style="display:flex;align-items:center;justify-content:center;font-size:26px">◻︎</div><div><b>Fotos wählen oder aufnehmen</b><div class="small muted">Ein oder viele Teile – Hintergrund wird automatisch entfernt.</div></div></div>
+    ${wish ? '' : `<div class="list-item" data-a="selfie"><div class="th" style="display:flex;align-items:center;justify-content:center;font-size:26px">◐</div><div><b>Spiegelselfie zerlegen</b><div class="small muted">Die KI erkennt jedes Teil an dir und schneidet es einzeln aus.</div></div></div>`}
+    <div class="list-item" data-a="paste"><div class="th" style="display:flex;align-items:center;justify-content:center;font-size:26px">✂︎</div><div><b>Motiv einfügen</b><div class="small muted">In Fotos lange auf das Teil drücken → „Kopieren“ → hier einfügen. Apples Freistellung, perfekt für knifflige Fälle.</div></div></div>
+    ${wish ? `<div class="list-item" data-a="link"><div class="th" style="display:flex;align-items:center;justify-content:center;font-size:26px">↗︎</div><div><b>Nur Link (z. B. Zara)</b><div class="small muted">Die KI liest Name, Preis & Farbe aus dem Produktlink. Foto kannst du später ergänzen.</div></div></div>` : ''}`);
+  sh.el.onclick = async e => {
+    const a = e.target.closest('[data-a]')?.dataset.a; if (!a) return;
+    if (a === 'photos') { const files = await pickFiles(!wish); if (files.length) { sh.close(); processFiles(files, { wish }); } }
+    if (a === 'selfie') { const [f] = await pickFiles(false); if (f) { sh.close(); processSelfie(f); } }
+    if (a === 'paste') { sh.close(); pasteSheet({ wish }); }
+    if (a === 'link') { sh.close(); linkSheet(); }
+  };
+}
+function pasteSheet({ wish = false } = {}) {
+  const sh = openSheet(`<h3>Motiv einfügen</h3><p class="small muted">1. Fotos-App öffnen · 2. lange auf das Kleidungsstück drücken · 3. „Kopieren“ · 4. zurück hierher und unten tippen → „Einfügen“.</p>
+    <button class="btn primary block" id="clip" style="margin:10px 0">Aus Zwischenablage einfügen</button>
+    <div class="pastebox" contenteditable="true" id="pbox">…oder hier lange tippen → Einfügen</div><div id="pinfo" class="small muted" style="margin-top:8px"></div>`);
+  const got = blobs => { if (!blobs.length) return; sh.close(); processFiles(blobs, { wish, preCut: true }); };
+  $('#clip', sh.el).onclick = async () => {
+    try {
+      const items = await navigator.clipboard.read(); const blobs = [];
+      for (const ci of items) { const t = ci.types.find(t => t.startsWith('image/')); if (t) blobs.push(await ci.getType(t)); }
+      if (!blobs.length) { $('#pinfo', sh.el).textContent = 'In der Zwischenablage ist kein Bild.'; return; }
+      got(blobs);
+    } catch (e) { $('#pinfo', sh.el).textContent = 'Kein Zugriff auf die Zwischenablage – nutze das Feld darunter.'; }
+  };
+  $('#pbox', sh.el).addEventListener('paste', async e => {
+    e.preventDefault(); const blobs = [];
+    for (const it of e.clipboardData.items) if (it.type.startsWith('image/')) blobs.push(it.getAsFile());
+    if (blobs.length) got(blobs); else $('#pinfo', sh.el).textContent = 'Kein Bild erkannt.';
+  });
+}
+function newItemBase(extra = {}) {
+  return { id: uid(), cat: 'top_l', name: '', color: '#888888', colorName: '', pattern: 'uni', formality: 2, warmth: 3, seasons: ['fs', 'hw'], occasions: [], brand: '', price: null, created: iso(), wears: [], notes: '', ...extra };
+}
+function applyAI(it, t) {
+  if (!t) return it;
+  if (CAT[t.cat]) it.cat = t.cat;
+  if (it.cat === 'sport' && SLOT_IDS.includes(t.sportSlot)) it.sportSlot = t.sportSlot;
+  if (t.name) it.name = t.name;
+  if (t.colorName) it.colorName = t.colorName;
+  if (!it.img && /^#[0-9a-f]{6}$/i.test(t.colorHex || '')) it.color = t.colorHex;
+  if (PATTERNS.includes(t.pattern)) it.pattern = t.pattern;
+  if (t.formality) it.formality = clamp(Math.round(t.formality), 1, 5);
+  if (t.warmth) it.warmth = clamp(Math.round(t.warmth), 1, 5);
+  if (Array.isArray(t.seasons) && t.seasons.length) it.seasons = t.seasons.filter(s => s === 'fs' || s === 'hw');
+  if (Array.isArray(t.occasions)) it.occasions = t.occasions.filter(o => OCCM[o]);
+  if (t.brand) it.brand = t.brand;
+  return it;
+}
+async function processFiles(files, { wish = false, preCut = false } = {}) {
+  const sh = openSheet(`<div class="kicker">Atelier bei der Arbeit</div><h3 id="st">Bereite vor …</h3><div class="prog"><i id="pg" style="width:0"></i></div><p class="small muted" id="sub">Beim ersten Mal lädt das Freistell-Modell (~40 MB) – danach geht's schneller.</p>`);
+  const st = () => $('#st', sh.el), pg = () => $('#pg', sh.el), sub = () => $('#sub', sh.el);
+  const out = [];
+  for (let i = 0; i < files.length; i++) {
+    if (!sh.el.isConnected) return;
+    st().textContent = `Stelle frei: ${i + 1} von ${files.length}`; pg().style.width = (i / files.length * 80) + '%';
+    let cut = null, err = null;
+    try {
+      if (preCut || await isTransparent(files[i])) cut = (await trimTransparent(files[i])).blob;
+      else cut = await removeBg(files[i], p => { sub().textContent = `Modell wird geladen … ${Math.round(p * 100)}%`; });
+    } catch (e) { err = e; console.warn(e); cut = await resizeBlob(files[i], 900, 'image/jpeg', 0.9); }
+    sub().textContent = err ? 'Ein Bild konnte nicht freigestellt werden – Original übernommen.' : '';
+    const it = newItemBase({ wish, img: cut, color: await dominantColor(cut) });
+    it.colorName = colorInfo(it.color).name; out.push(it);
+  }
+  if (S.settings.apiKey) {
+    st().textContent = 'Die KI erkennt Kategorie, Stil & Saison …'; pg().style.width = '88%';
+    for (let i = 0; i < out.length; i += 6) {
+      const chunk = out.slice(i, i + 6);
+      try {
+        const parts = []; for (const [k, it] of chunk.entries()) { parts.push({ text: `Bild ${k}:` }); parts.push(await imgPart(it.img, 448)); }
+        parts.push({ text: `Beschreibe jedes Kleidungsstück. Gib ein Array mit genau ${chunk.length} Einträgen zurück, idx = Bildnummer.\n${ITEM_RULES}` });
+        const res = await gemini({ parts, temperature: 0.2, schema: { type: 'ARRAY', items: { type: 'OBJECT', properties: { idx: { type: 'INTEGER' }, ...ITEM_FIELDS }, required: ['idx', 'cat', 'name'] } } });
+        for (const t of res || []) if (chunk[t.idx]) applyAI(chunk[t.idx], t);
+      } catch (e) { sub().textContent = e.message + ' – du kannst die Angaben selbst ausfüllen.'; if (e.code === 'NO_KEY') break; await sleep(1200); }
+    }
+  }
+  pg().style.width = '100%';
+  reviewSheet(sh, out);
+}
+async function processSelfie(file) {
+  const sh = openSheet(`<div class="kicker">Spiegelselfie</div><h3 id="st">Die KI sucht deine Teile …</h3><div class="prog"><i id="pg" style="width:10%"></i></div><p class="small muted" id="sub"></p>`);
+  const st = () => $('#st', sh.el), pg = () => $('#pg', sh.el), sub = () => $('#sub', sh.el);
+  try {
+    const full = await resizeBlob(file, 1600, 'image/jpeg', 0.92);
+    const res = await gemini({
+      temperature: 0.2, parts: [await imgPart(full, 1280), { text: `Das ist ein Spiegelselfie. Erkenne jedes Kleidungsstück, jedes Paar Schuhe und jede Tasche, die die Person trägt (kein Handy, kein Schmuck). Für jedes Teil: box_2d = [ymin, xmin, ymax, xmax] normiert auf 0–1000, eng um das Teil.\n${ITEM_RULES}` }],
+      schema: { type: 'ARRAY', items: { type: 'OBJECT', properties: { box_2d: { type: 'ARRAY', items: { type: 'INTEGER' } }, ...ITEM_FIELDS }, required: ['box_2d', 'cat', 'name'] } },
+    });
+    const found = (res || []).filter(r => Array.isArray(r.box_2d) && r.box_2d.length === 4);
+    if (!found.length) throw new Error('Ich konnte keine Teile erkennen. Versuch ein helleres Foto mit ganzer Person.');
+    const out = [];
+    for (let i = 0; i < found.length; i++) {
+      if (!sh.el.isConnected) return;
+      st().textContent = `Schneide aus: ${found[i].name} (${i + 1}/${found.length})`; pg().style.width = (15 + i / found.length * 80) + '%';
+      const crop = await cropBlob(full, found[i].box_2d, 0.06);
+      let cut; try { cut = await removeBg(crop, p => sub().textContent = `Modell wird geladen … ${Math.round(p * 100)}%`); sub().textContent = ''; } catch (e) { cut = crop; }
+      const it = newItemBase({ img: cut, color: await dominantColor(cut) }); applyAI(it, found[i]);
+      if (!it.colorName) it.colorName = colorInfo(it.color).name; out.push(it);
+    }
+    reviewSheet(sh, out, { hint: 'Tipp: Bei Selfies schneidet die KI aus dem Foto aus. Wenn ein Teil unsauber ist, kannst du es später mit „Motiv einfügen“ ersetzen.' });
+  } catch (e) { sh.el.innerHTML = `<h3>Das hat nicht geklappt</h3><p>${esc(e.message)}</p>`; }
+}
+function reviewSheet(sh, list, { hint = '' } = {}) {
+  const render = () => {
+    sh.el.innerHTML = `<div class="kicker">Prüfen & speichern</div><h2 style="margin-top:4px">${list.length} ${list.length === 1 ? 'Teil' : 'Teile'} <em>bereit</em></h2>
+      ${hint ? `<p class="small muted">${esc(hint)}</p>` : ''}
+      ${list.map((it, i) => `<div class="card" data-i="${i}"><div class="row" style="align-items:flex-start">
+        <div style="width:96px;height:124px;flex:none;background:var(--card);border-radius:12px;border:1px solid var(--line);padding:4px"><img src="${URL.createObjectURL(it.img)}" style="width:100%;height:100%;object-fit:contain"></div>
+        <div style="flex:1;min-width:0">
+          <input class="in" data-f="name" value="${esc(it.name)}" placeholder="Name, z. B. Wollmantel">
+          <select class="in" data-f="cat" style="margin-top:6px">${CATS.map(c => `<option value="${c.id}" ${c.id === it.cat ? 'selected' : ''}>${c.name}</option>`).join('')}</select>
+          ${it.cat === 'sport' ? `<select class="in" data-f="sportSlot" style="margin-top:6px">${SLOT_IDS.map(s => `<option value="${s}" ${s === (it.sportSlot || 'top') ? 'selected' : ''}>als ${SLOT_NAMES[s]}</option>`).join('')}</select>` : ''}
+          <div class="small" style="margin-top:6px"><span class="dot" style="background:${it.color}"></span> ${esc(it.colorName || colorInfo(it.color).name)} · <span class="lvl-${colorInfo(it.color).level}">${LVL_ICON[colorInfo(it.color).level]} ${LVL_TXT[colorInfo(it.color).level]}</span></div>
+          <div class="small muted">${FORMALITY[it.formality]} · ${(it.seasons || []).map(s => s === 'fs' ? 'F/S' : 'H/W').join(' + ') || 'ganzjährig'}</div>
+        </div></div>
+        <div class="row" style="margin-top:8px"><button class="btn ghost small" data-x="${i}">Verwerfen</button><div class="spacer"></div><button class="btn ghost small" data-more="${i}">Details</button></div></div>`).join('')}
+      <button class="btn primary block" id="saveAll" ${list.length ? '' : 'disabled'}>Alle in den ${list[0]?.wish ? 'Wunschliste' : 'Schrank'}</button>`;
+  };
+  render();
+  sh.el.oninput = e => { const f = e.target.dataset.f; if (!f) return; const it = list[+e.target.closest('[data-i]').dataset.i]; it[f] = e.target.value; if (f === 'cat') render(); };
+  sh.el.onchange = sh.el.oninput;
+  sh.el.onclick = async e => {
+    const x = e.target.closest('[data-x]'); if (x) { list.splice(+x.dataset.x, 1); render(); return; }
+    const m = e.target.closest('[data-more]'); if (m) { const it = list[+m.dataset.more]; editFields(it, render); return; }
+    if (e.target.id === 'saveAll') {
+      for (const it of list) await saveItem(it);
+      toast(`${list.length} ${list.length === 1 ? 'Teil' : 'Teile'} gespeichert.`); sh.close();
+      if (list[0]?.wish) go('wunsch'); else if (current === 'schrank') go('schrank'); else go(current);
+    }
+  };
+}
+function fieldsHTML(it) {
+  return `<label class="f">Name</label><input class="in" data-f="name" value="${esc(it.name)}">
+  <label class="f">Kategorie</label><select class="in" data-f="cat">${CATS.map(c => `<option value="${c.id}" ${c.id === it.cat ? 'selected' : ''}>${c.name}</option>`).join('')}</select>
+  ${it.cat === 'sport' ? `<label class="f">Zählt als</label><select class="in" data-f="sportSlot">${SLOT_IDS.map(s => `<option value="${s}" ${s === (it.sportSlot || 'top') ? 'selected' : ''}>${SLOT_NAMES[s]}</option>`).join('')}</select>` : ''}
+  <label class="f">Farbe</label><div class="row"><input type="color" data-f="color" value="${esc(it.color)}" style="width:52px;height:40px;border:none;background:none"><input class="in" data-f="colorName" value="${esc(it.colorName)}" placeholder="Farbname"></div>
+  <label class="f">Muster</label><select class="in" data-f="pattern">${PATTERNS.map(p => `<option ${p === it.pattern ? 'selected' : ''}>${p}</option>`).join('')}</select>
+  <label class="f">Wie schick? · <span data-lbl="formality">${FORMALITY[it.formality]}</span></label><input type="range" min="1" max="5" step="1" data-f="formality" value="${it.formality}">
+  <label class="f">Wie warm? · <span data-lbl="warmth">${WARMTH[it.warmth]}</span></label><input type="range" min="1" max="5" step="1" data-f="warmth" value="${it.warmth}">
+  <label class="f">Saison</label><div class="seg" data-multi="seasons">${SEASONS.map(s => `<button type="button" data-v="${s.id}" class="${it.seasons?.includes(s.id) ? 'on' : ''}">${s.name}</button>`).join('')}</div>
+  <label class="f">Anlässe</label><div class="seg" data-multi="occasions">${OCC.map(o => `<button type="button" data-v="${o.id}" class="${it.occasions?.includes(o.id) ? 'on' : ''}">${o.name}</button>`).join('')}</div>
+  <div class="grid2"><div><label class="f">Marke</label><input class="in" data-f="brand" value="${esc(it.brand || '')}"></div><div><label class="f">Preis (€)</label><input class="in" data-f="price" inputmode="decimal" value="${it.price ?? ''}"></div></div>
+  ${it.wish ? `<label class="f">Link</label><input class="in" data-f="link" value="${esc(it.link || '')}" placeholder="https://…">` : ''}
+  <label class="f">Notiz</label><textarea class="in" data-f="notes">${esc(it.notes || '')}</textarea>`;
+}
+function bindFields(root, it, onChange) {
+  const upd = e => {
+    const f = e.target.dataset.f; if (!f) return; let v = e.target.value;
+    if (f === 'formality' || f === 'warmth') { v = +v; const l = $(`[data-lbl=${f}]`, root); if (l) l.textContent = (f === 'formality' ? FORMALITY : WARMTH)[v]; }
+    if (f === 'price') v = v === '' ? null : parseFloat(String(v).replace(',', '.'));
+    it[f] = v; if (f === 'color') { it.colorName = colorInfo(v).name; const cn = $('[data-f=colorName]', root); if (cn) cn.value = it.colorName; }
+    onChange && onChange(f);
+  };
+  root.addEventListener('input', upd); root.addEventListener('change', upd);
+  root.addEventListener('click', e => {
+    const b = e.target.closest('[data-multi] button'); if (!b) return; const key = b.parentElement.dataset.multi;
+    const set = new Set(it[key] || []); set.has(b.dataset.v) ? set.delete(b.dataset.v) : set.add(b.dataset.v); it[key] = [...set]; b.classList.toggle('on'); onChange && onChange(key);
+  });
+}
+function editFields(it, after) {
+  const sh = openSheet(`<h3>Details</h3>${fieldsHTML(it)}<button class="btn primary block" style="margin-top:16px" id="ok">Fertig</button>`, { onClose: after });
+  bindFields(sh.el, it, f => { if (f === 'cat') { sh.close(); editFields(it, after); } });
+  $('#ok', sh.el).onclick = () => sh.close();
+}
+function itemSheet(id, after) {
+  const it = itemById(id); if (!it) return;
+  const pool = closet(); const n = countOutfitsWith(it, it.wish ? pool : pool);
+  const ci = it._c; const wears = (it.wears || []).length;
+  const similar = pool.filter(o => o.id !== it.id && o.cat === it.cat && dE(o._c.lab, ci.lab) < 16).slice(0, 4);
+  const sh = openSheet(`<div style="background:var(--card);border-radius:18px;padding:14px;border:1px solid var(--line)"><img src="${imgURL(it)}" style="max-height:340px;margin:0 auto;object-fit:contain"></div>
+    <div class="kicker" style="margin-top:14px">${CAT[it.cat]?.name}${it.brand ? ' · ' + esc(it.brand) : ''}</div><h2 style="margin-top:2px">${esc(it.name || 'Ohne Namen')}</h2>
+    <div class="grid2">
+      <div class="card" style="margin:0"><div class="kicker">Outfits</div><div class="score" style="font-size:34px">${n}</div><div class="small muted">Kombinationen mit deinem Schrank</div></div>
+      <div class="card" style="margin:0"><div class="kicker">Getragen</div><div class="score" style="font-size:34px">${wears}×</div><div class="small muted">${it.price ? 'Kosten/Tragen: ' + eur(it.price / Math.max(1, wears)) : 'Preis eintragen für Kosten/Tragen'}</div></div>
+    </div>
+    <div class="card"><div class="row"><span class="dot" style="width:26px;height:26px;background:${it.color}"></span><div><b>${esc(it.colorName || ci.name)}</b> <span class="lvl-${ci.level}">${LVL_ICON[ci.level]} ${LVL_TXT[ci.level]}</span><div class="small muted">${colorNote(ci)}</div></div></div></div>
+    ${similar.length ? `<div class="card"><div class="kicker">Ähnliche Teile in deinem Schrank</div><div class="grid3" style="margin-top:8px">${similar.map(s => itemCard(s)).join('')}</div></div>` : ''}
+    <div class="row wrap" style="margin:10px 0">
+      ${it.wish ? `<button class="btn primary small" data-a="bought">Gekauft – in den Schrank</button>` : `<button class="btn primary small" data-a="worn">Heute getragen</button>`}
+      <button class="btn small" data-a="studio">Im Studio</button>
+      <button class="btn ghost small" data-a="recut">Bild ersetzen</button>
+      ${it.link ? `<a class="btn ghost small" href="${esc(it.link)}" target="_blank" rel="noopener">Zum Shop</a>` : ''}
+    </div>
+    <details><summary class="kicker" style="cursor:pointer;padding:10px 0">Bearbeiten</summary><div id="fl">${fieldsHTML(it)}</div></details>
+    <hr><button class="btn ghost block" data-a="del" style="color:var(--bad)">Löschen</button>`, { onClose: after });
+  let dirty = false;
+  bindFields($('#fl', sh.el), it, async f => { dirty = true; await saveItem(it); if (f === 'cat') { sh.close(); itemSheet(id, after); } });
+  sh.el.addEventListener('click', async e => {
+    const a = e.target.closest('[data-a]')?.dataset.a; if (!a) return;
+    if (a === 'worn') { const p = S.plans[iso()]; const ids = [...new Set([...(p?.itemIds || []), it.id])]; await markWorn(iso(), ids); toast('Getragen ✓'); sh.close(); }
+    if (a === 'bought') { it.wish = false; it.created = iso(); await saveItem(it); toast('Willkommen im Schrank!'); sh.close(); }
+    if (a === 'studio') { S.ui.studio = { preset: [it.id], includeWishes: !!it.wish }; go('studio'); }
+    if (a === 'del') { if (await confirmSheet(`„${it.name || 'Teil'}“ wirklich löschen?`, 'Löschen', true)) { await deleteItem(it.id); sh.close(); toast('Gelöscht.'); } }
+    if (a === 'recut') {
+      const ch = openSheet(`<h3>Bild ersetzen</h3><button class="btn block" data-r="photo">Neues Foto (wird freigestellt)</button><div style="height:8px"></div><button class="btn block" data-r="paste">Motiv aus Fotos einfügen</button>`);
+      ch.el.onclick = async ev => {
+        const r = ev.target.closest('[data-r]')?.dataset.r; if (!r) return;
+        let blob = null;
+        if (r === 'photo') { const [f] = await pickFiles(false); if (!f) return; withSpinner(ch, 'Stelle frei …'); try { blob = await removeBg(f); } catch (e2) { blob = await resizeBlob(f, 900); } }
+        if (r === 'paste') { try { const items = await navigator.clipboard.read(); for (const ci2 of items) { const t = ci2.types.find(t => t.startsWith('image/')); if (t) { blob = (await trimTransparent(await ci2.getType(t))).blob; break; } } } catch (e2) { toast('Kein Bild in der Zwischenablage.'); } }
+        if (!blob) return;
+        it.img = blob; it.color = await dominantColor(blob); it.colorName = colorInfo(it.color).name; dropURL(it.id); await saveItem(it); ch.close(); sh.close(); itemSheet(id, after);
+      };
+    }
+  });
+}
+
+// =========================================================
+// STUDIO (Clueless-Swipe)
+// =========================================================
+routes.studio = async () => {
+  const v = view(); const st = S.ui.studio || {}; S.ui.studio = null;
+  const state = { occasion: st.occasion || null, includeWishes: !!st.includeWishes, dress: false, locks: {}, idx: {}, temp: null };
+  if (st.preset) { const ps = st.preset.map(itemById).filter(Boolean); if (ps.some(p => slotOf(p) === 'dress')) state.dress = true; }
+  const ROWS = () => state.dress ? ['outer', 'mid', 'dress', 'shoes', 'bag'] : ['outer', 'mid', 'top', 'bottom', 'shoes', 'bag'];
+  const OPTIONAL = new Set(['outer', 'mid', 'bag']);
+  const H = { outer: 120, mid: 120, top: 150, bottom: 175, dress: 300, shoes: 92, bag: 84 };
+  try { const wx = await myWeather(); if (wx) state.temp = wx.current.apparent_temperature; } catch (e) { }
+  let pools = {};
+  const buildPools = () => {
+    const base = candidatePool({ occasion: state.occasion, includeWishes: state.includeWishes, season: null });
+    const g = bySlot(base);
+    for (const s of SLOT_IDS) {
+      let arr = g[s].slice().sort((a, b) => (b.occasions?.includes(state.occasion) ? 1 : 0) - (a.occasions?.includes(state.occasion) ? 1 : 0) || a._c.L - b._c.L);
+      pools[s] = OPTIONAL.has(s) ? [null, ...arr] : arr;
+    }
+  };
+  buildPools();
+  if (st.preset) for (const id of st.preset) { const it = itemById(id); if (!it) continue; const s = slotOf(it); const i = (pools[s] || []).findIndex(x => x && x.id === id); if (i >= 0) { state.idx[s] = i; state.locks[s] = true; } }
+  const current = () => ROWS().map(s => pools[s]?.[state.idx[s] ?? 0]).filter(Boolean);
+  const lockSVG = on => `<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="${on ? 'M8 11V7a4 4 0 0 1 8 0v4' : 'M8 11V7a4 4 0 0 1 7.5-2'}"/></svg>`;
+  v.innerHTML = `<header class="mast" style="padding-bottom:4px"><div class="kicker">Wischen · Festhalten · Mischen</div><h1>Le <em>Studio</em></h1></header>
+    <div class="chips" id="sOcc"><button class="chip plum ${!state.occasion ? 'on' : ''}" data-o="">Alle Anlässe</button>${OCC.map(o => `<button class="chip plum ${o.id === state.occasion ? 'on' : ''}" data-o="${o.id}">${o.name}</button>`).join('')}</div>
+    <div class="chips" style="padding-top:0"><button class="chip ${state.dress ? 'on' : ''}" id="tDress">Kleid statt Ober-/Unterteil</button><button class="chip ${state.includeWishes ? 'on' : ''}" id="tWish">Wunschteile anprobieren</button><button class="chip" id="tLooks">Meine Looks</button></div>
+    <div id="rows"></div>
+    <div class="studio-bar"><div class="sc" id="sc">–</div><div class="small muted" id="scn" style="flex:1;line-height:1.2;max-height:2.4em;overflow:hidden"></div>
+      <button class="iconbtn" id="bShuffle" title="Mischen"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+      <button class="iconbtn" id="bSave" title="Speichern"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg></button>
+      <button class="iconbtn plum" id="bAI" title="KI-Kritik"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
+    </div>`;
+  const rowsEl = $('#rows');
+  const renderRows = () => {
+    const rows = ROWS();
+    if (!closet().length) { rowsEl.innerHTML = emptyState('Das Studio ist leer.', 'Füge zuerst Teile in deinen Schrank hinzu.', `<button class="btn primary" id="ga">Zum Schrank</button>`); $('#ga').onclick = () => go('schrank'); return; }
+    rowsEl.innerHTML = rows.map(s => {
+      const arr = pools[s] || []; const hh = H[s]; const w = Math.round(hh * (s === 'dress' ? 0.62 : s === 'shoes' || s === 'bag' ? 1.3 : 0.95));
+      return `<div class="studio-row" data-s="${s}"><span class="lbl">${SLOT_NAMES[s]}</span>
+        <button class="lock ${state.locks[s] ? 'on' : ''}" data-lock="${s}">${lockSVG(state.locks[s])}</button>
+        <div class="track" style="--w:${w}px;--hgt:${hh}px">${arr.length ? arr.map((it, i) => `<div class="slide" data-i="${i}">${it ? `<img src="${imgURL(it)}" alt="">` : `<div class="none">ohne</div>`}</div>`).join('') : `<div class="slide cur"><div class="none">keine ${SLOT_NAMES[s]}</div></div>`}</div></div>`;
+    }).join('');
+    $$('.studio-row', rowsEl).forEach(row => {
+      const s = row.dataset.s; const tr = $('.track', row); const slides = $$('.slide', tr);
+      const step = () => slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1;
+      const mark = () => slides.forEach((sl, i) => sl.classList.toggle('cur', i === (state.idx[s] ?? 0)));
+      requestAnimationFrame(() => { tr.scrollLeft = (state.idx[s] ?? 0) * step(); mark(); });
+      let t = null;
+      tr.addEventListener('scroll', () => {
+        clearTimeout(t); t = setTimeout(() => {
+          const i = clamp(Math.round(tr.scrollLeft / step()), 0, slides.length - 1);
+          if (i !== (state.idx[s] ?? 0)) { state.idx[s] = i; mark(); updateScore(); }
+        }, 90);
+      }, { passive: true });
+      tr.addEventListener('click', e => { const sl = e.target.closest('.slide'); if (!sl) return; const it = pools[s][+sl.dataset.i]; if (+sl.dataset.i !== (state.idx[s] ?? 0)) tr.scrollTo({ left: +sl.dataset.i * step(), behavior: 'smooth' }); else if (it) itemSheet(it.id); });
+      row._scrollTo = i => { state.idx[s] = i; tr.scrollTo({ left: i * step(), behavior: 'smooth' }); mark(); };
+    });
+    updateScore();
+  };
+  const updateScore = () => {
+    const ev = evaluate(current(), { occasion: state.occasion, temp: state.temp });
+    $('#sc').textContent = ev.total ? String(ev.total).replace('.', ',') : '–';
+    $('#scn').textContent = ev.notes[0] || (ev.total >= 8 ? 'Sitzt. Speichern?' : '');
+  };
+  rowsEl.addEventListener('click', e => {
+    const l = e.target.closest('[data-lock]'); if (!l) return; const s = l.dataset.lock; state.locks[s] = !state.locks[s];
+    l.classList.toggle('on', state.locks[s]); l.innerHTML = lockSVG(state.locks[s]);
+  });
+  $('#sOcc').onclick = e => { const b = e.target.closest('[data-o]'); if (!b) return; const keep = current(); state.occasion = b.dataset.o || null; $$('#sOcc .chip').forEach(c => c.classList.toggle('on', c === b)); buildPools(); relocate(keep); renderRows(); };
+  const relocate = keep => { for (const s of SLOT_IDS) { const it = keep.find(k => slotOf(k) === s); const i = it ? pools[s].findIndex(x => x && x.id === it.id) : -1; state.idx[s] = i >= 0 ? i : 0; } };
+  $('#tDress').onclick = e => { state.dress = !state.dress; e.target.classList.toggle('on', state.dress); renderRows(); };
+  $('#tWish').onclick = e => { const keep = current(); state.includeWishes = !state.includeWishes; e.target.classList.toggle('on', state.includeWishes); buildPools(); relocate(keep); renderRows(); };
+  $('#tLooks').onclick = () => go('looks');
+  $('#bShuffle').onclick = () => {
+    const locked = {}; for (const s of ROWS()) if (state.locks[s]) locked[s] = pools[s][state.idx[s] ?? 0] || null;
+    if (state.dress && !locked.dress && pools.dress.length) locked.dress = pick(pools.dress);
+    if (!state.dress) { locked.dress = undefined; }
+    const [r] = suggest({ occasion: state.occasion, temp: state.temp, n: 1, locked: Object.fromEntries(Object.entries(locked).filter(([k, v]) => v !== undefined && (v !== null || true))), includeWishes: state.includeWishes, tries: 250 });
+    if (!r) { toast('Keine passende Kombi gefunden – lös ein Schloss.'); return; }
+    for (const s of ROWS()) {
+      if (state.locks[s]) continue; const it = r.slots[s];
+      const i = it ? pools[s].findIndex(x => x && x.id === it.id) : 0; const row = $(`.studio-row[data-s=${s}]`, rowsEl);
+      if (row && i >= 0) row._scrollTo(i);
+    }
+    setTimeout(updateScore, 450);
+  };
+  $('#bSave').onclick = async () => {
+    const items = current(); if (items.length < 2) { toast('Wähle erst ein Outfit.'); return; }
+    const ev = evaluate(items, { occasion: state.occasion, temp: state.temp });
+    const o = { id: uid(), itemIds: items.map(i => i.id), occasion: state.occasion, score: ev.total, created: iso(), name: '' };
+    S.outfits.unshift(o); await DB.put('outfits', o); toast('Look gespeichert ♥');
+  };
+  $('#bAI').onclick = async () => {
+    const items = current(); if (items.length < 2) { toast('Wähle erst ein Outfit.'); return; }
+    const sh = openSheet(''); withSpinner(sh, 'Die Redaktion begutachtet deinen Look …');
+    try {
+      const parts = []; for (const it of items) { parts.push({ text: `Teil ${it.id} (${SLOT_NAMES[slotOf(it)]}: ${it.name}, ${it.colorName || it._c.name}):` }); parts.push(await imgPart(it.img instanceof Blob ? it.img : await (await fetch(imgURL(it))).blob(), 384)); }
+      parts.push({ text: `Bewerte dieses zusammengestellte Outfit ehrlich-direkt (1–10, Dezimal erlaubt)${state.occasion ? ' für den Anlass ' + OCCM[state.occasion].name : ''}${state.temp != null ? ', gefühlte Temperatur ' + Math.round(state.temp) + '°C' : ''}.
+parts: Farbe (Deep Autumn & Harmonie), Silhouette & Proportion, Stil-Stimmigkeit, Anlass – je 1-10 + ein knackiger Satz.
+swaps: bis zu 3 konkrete Tauschvorschläge aus ihrem Schrank: removeId = ID eines Teils aus dem Outfit (oder leer, wenn etwas ergänzt werden soll), addId = ID aus dem Schrank. Nur echte IDs!
+missing: bis zu 2 Teile, die ihr fehlen und den Look perfekt machen würden. trend: ein Satz Trend-Bonus. headline: verspielte Magazin-Überschrift. verdict: 2-3 Sätze ehrliches Fazit.
+Ihr Schrank (id|Kategorie|Name|Farbe|Muster|Formalität|Wärme|Saison):
+${closetSummary(320, state.includeWishes)}` });
+      const res = await gemini({ system: SYS_STYLIST(), schema: CRIT_SCHEMA, parts });
+      renderCritique(sh, res, {
+        onApplySwap: sw => {
+          const s = slotOf(sw.add);
+          if (s === 'dress' && !state.dress) { state.dress = true; $('#tDress').classList.add('on'); }
+          if ((s === 'top' || s === 'bottom') && state.dress) { state.dress = false; $('#tDress').classList.remove('on'); }
+          const i = pools[s]?.findIndex(x => x && x.id === sw.add.id); if (i >= 0) { state.idx[s] = i; renderRows(); }
+        },
+      });
+    } catch (e) { sh.el.innerHTML = `<h3>Hoppla</h3><p>${esc(e.message)}</p>`; }
+  };
+  renderRows();
+  if (!st.preset && closet().length && !Object.keys(state.idx).length) setTimeout(() => $('#bShuffle')?.click(), 150);
+};
+
+// =========================================================
+// CAPSULE
+// =========================================================
+const STAPLES = {
+  hw: [
+    ['outer', 'Camel-Wollmantel', '#B08453', 4, 5], ['outer', 'Braune Lederjacke', '#4A2C22', 2, 4], ['mid', 'Schokobrauner Blazer', '#4A2C22', 4, 3],
+    ['mid', 'Olive Strickjacke', '#5D6531', 2, 4], ['top_l', 'Creme Strickpullover', '#EEE3CC', 2, 4], ['top_l', 'Espresso Rollkragen', '#36251D', 3, 3],
+    ['top_l', 'Pflaume Feinstrick', '#5B2A45', 3, 3], ['top_l', 'Creme Bluse', '#F1E8D6', 4, 2], ['top_l', 'Olive Hoodie (Street)', '#646A3A', 1, 4],
+    ['pants_l', 'Dunkle Straight Jeans', '#2C3A52', 2, 3], ['pants_l', 'Weite Bundfaltenhose Schoko', '#4A2C22', 4, 3], ['pants_l', 'Wollhose Camel', '#B08453', 4, 4],
+    ['skirt', 'Satin-Midirock Pflaume', '#5B2A45', 4, 2], ['dress', 'Strickkleid Schoko', '#4A2C22', 3, 4], ['dress', 'Slipdress Burgunder (Bar)', '#6A1F2E', 5, 1],
+    ['shoes', 'Braune Loafer', '#4A2C22', 3, 3], ['shoes', 'Stiefeletten Cognac', '#9A5B2E', 3, 4], ['shoes', 'Kniehohe Stiefel Espresso', '#36251D', 4, 4],
+    ['shoes', 'Creme Sneaker', '#EEE3CC', 2, 3], ['shoes', 'Spitze Pumps Burgunder', '#6A1F2E', 5, 2], ['bag', 'Cognac Shopper', '#9A5B2E', 3, 3], ['bag', 'Mini-Abendtasche Pflaume', '#5B2A45', 5, 3],
+  ],
+  fs: [
+    ['outer', 'Trenchcoat Camel', '#B08453', 3, 3], ['mid', 'Leinenblazer Haferbeige', '#D9C7A7', 4, 2], ['mid', 'Feinstrick-Cardigan Rost', '#9E4426', 2, 2],
+    ['top_s', 'Creme T-Shirt (Premium)', '#EEE3CC', 2, 1], ['top_s', 'Tanktop Schoko', '#4A2C22', 2, 1], ['top_l', 'Leinenhemd Olive', '#5D6531', 3, 2],
+    ['top_s', 'Satin-Top Senf', '#C39A2E', 4, 1], ['pants_l', 'Leinenhose Creme', '#EEE3CC', 3, 1], ['pants_l', 'Weite Jeans dunkel', '#2C3A52', 2, 2],
+    ['pants_s', 'Bermuda Khaki', '#8C8456', 2, 1], ['skirt', 'Midirock Terrakotta', '#B35A38', 3, 1], ['dress', 'Sommerkleid Rost', '#9E4426', 3, 1],
+    ['dress', 'Satin-Slipdress Waldgrün (Bar)', '#2F4B3A', 5, 1], ['shoes', 'Sandaletten Cognac', '#9A5B2E', 3, 1], ['shoes', 'Ballerinas Schoko', '#4A2C22', 3, 2],
+    ['shoes', 'Creme Sneaker', '#EEE3CC', 2, 2], ['shoes', 'Riemchen-Heels Bronze', '#8C6A3A', 5, 1], ['bag', 'Raffia-Tasche', '#D9C7A7', 2, 2], ['bag', 'Cognac Schultertasche', '#9A5B2E', 3, 2],
+  ],
+};
+function stapleItems(season) {
+  return STAPLES[season].map(([cat, name, color, f, w]) => enrich({ id: 'st_' + name, cat, name, color, colorName: colorInfo(color).name, pattern: 'uni', formality: f, warmth: w, seasons: [season], occasions: [], wears: [] }));
+}
+routes.capsule = async () => {
+  const v = view(); const se = S.ui.capSeason || currentSeason();
+  v.innerHTML = `<header class="mast"><div class="kicker">Weniger, aber besser</div><h1>La <em>Capsule</em></h1></header>
+    <div class="chips"><button class="chip ${se === 'hw' ? 'on' : ''}" data-se="hw">Herbst / Winter</button><button class="chip ${se === 'fs' ? 'on' : ''}" data-se="fs">Frühling / Sommer</button></div>
+    <div id="cap"><div class="spin"></div></div>`;
+  $$('[data-se]').forEach(b => b.onclick = () => { S.ui.capSeason = b.dataset.se; go('capsule'); });
+  await sleep(30);
+  const pool = closet().filter(i => !i.seasons?.length || i.seasons.includes(se));
+  const box = $('#cap');
+  if (pool.length < 3) { box.innerHTML = emptyState('Zu wenig Daten.', 'Sobald ein paar Teile für diese Saison im Schrank sind, zeige ich dir Lücken und Kandidaten zum Aussortieren.'); return; }
+  const cores = validCores(pool); const totalOutfits = cores.reduce((s, c) => s + c.shoes.length, 0);
+  const levels = { good: 0, ok: 0, bad: 0 }; pool.forEach(i => levels[i._c.level]++);
+  // Lücken
+  const KW = ['Trench', 'Mantel', 'Lederjacke', 'Blazer', 'Strickjacke', 'Cardigan', 'Rollkragen', 'Pullover', 'Feinstrick', 'Bluse', 'Hoodie', 'Hemd', 'T-Shirt', 'Shirt', 'Tanktop', 'Top', 'Jeans', 'Bundfalten', 'Wollhose', 'Leinenhose', 'Bermuda', 'Shorts', 'Rock', 'Strickkleid', 'Slipdress', 'Sommerkleid', 'Loafer', 'Stiefeletten', 'Stiefel', 'Boots', 'Sneaker', 'Pumps', 'Sandaletten', 'Ballerinas', 'Heels', 'Shopper', 'Abendtasche', 'Clutch', 'Raffia', 'Schultertasche'];
+  const kwOf = n => KW.find(k => (n || '').toLowerCase().includes(k.toLowerCase()));
+  const gaps = stapleItems(se).map(st => {
+    const sk = kwOf(st.name);
+    const have = pool.find(i => {
+      if (i.cat !== st.cat || dE(i._c.lab, st._c.lab) > 22 || Math.abs((i.formality || 2) - st.formality) > 1) return false;
+      const ik = kwOf(i.name); return !ik || !sk || ik === sk;
+    });
+    return { st, have, gain: have ? 0 : countOutfitsWith(st, pool) };
+  });
+  const missing = gaps.filter(g => !g.have).sort((a, b) => b.gain - a.gain);
+  const owned = gaps.filter(g => g.have);
+  // Aussortieren
+  const counts = new Map(pool.map(i => [i.id, countOutfitsWith(i, pool)]));
+  const orphans = pool.filter(i => counts.get(i.id) <= 1 && !['bag'].includes(slotOf(i)));
+  const badColor = pool.filter(i => i._c.level === 'bad');
+  const old = pool.filter(i => !(i.wears || []).length && (Date.now() - parseISO(i.created || iso()).getTime()) > 60 * 864e5);
+  const dups = []; const seenD = new Set();
+  for (const a of pool) { if (seenD.has(a.id)) continue; const grp = pool.filter(b => b.id !== a.id && b.cat === a.cat && b.pattern === a.pattern && dE(a._c.lab, b._c.lab) < 9 && Math.abs((a.formality || 2) - (b.formality || 2)) <= 1); if (grp.length) { const all = [a, ...grp]; all.forEach(x => seenD.add(x.id)); dups.push(all); } }
+  const out = new Map(); const add = (i, why) => { if (!out.has(i.id)) out.set(i.id, { i, why: [] }); out.get(i.id).why.push(why); };
+  orphans.forEach(i => add(i, 'lässt sich kaum kombinieren')); badColor.forEach(i => add(i, 'nicht dein Farbtyp')); old.forEach(i => add(i, 'seit 2 Monaten nie getragen'));
+  dups.forEach(g => g.sort((a, b) => (b.wears || []).length - (a.wears || []).length).slice(1).forEach(i => add(i, 'fast identisch mit einem anderen Teil')));
+  const outList = [...out.values()].sort((a, b) => b.why.length - a.why.length);
+  const pct = Math.round(levels.good / pool.length * 100);
+  box.innerHTML = `
+    <div class="card plum"><div class="kicker">${se === 'hw' ? 'Herbst / Winter' : 'Frühling / Sommer'}</div>
+      <div class="row" style="align-items:flex-end"><div><div class="score" style="color:#fff">${totalOutfits}</div><div class="small">mögliche Outfits</div></div><div class="spacer"></div>
+      <div style="text-align:right"><div style="font-family:var(--serif);font-size:28px">${pool.length}</div><div class="small">Teile</div></div><div style="text-align:right;margin-left:16px"><div style="font-family:var(--serif);font-size:28px">${pct}%</div><div class="small">Deep Autumn</div></div></div></div>
+    <h2>Was dir <em>fehlt</em></h2>
+    <p class="small muted">Sortiert nach Wirkung: wie viele neue Outfits ein Teil mit deinem bestehenden Schrank ermöglicht.</p>
+    ${missing.slice(0, 8).map((g, i) => `<div class="list-item" style="cursor:default"><span class="dot" style="width:34px;height:34px;background:${g.st.color}"></span><div style="flex:1"><b>${esc(g.st.name)}</b><div class="small muted">${CAT[g.st.cat].name} · ${FORMALITY[g.st.formality]}</div></div><div style="text-align:right"><div style="font-family:var(--serif);font-size:20px">+${g.gain}</div><button class="btn small" data-gap="${i}">+ Wunsch</button></div></div>`).join('') || '<p>Deine Basis ist komplett. Chapeau.</p>'}
+    ${owned.length ? `<p class="small muted" style="margin-top:10px">✓ Schon da: ${owned.map(g => esc(g.st.name)).join(', ')}</p>` : ''}
+    <h2>Kann <em>gehen</em></h2>
+    <p class="small muted">Kandidaten zum Aussortieren. Entscheide selbst – ich bin nur ehrlich.</p>
+    ${outList.length ? outList.slice(0, 20).map(({ i, why }) => `<div class="list-item" data-id="${i.id}"><div class="th"><img src="${imgURL(i)}"></div><div style="flex:1"><b>${esc(i.name || CAT[i.cat].name)}</b><div class="small muted">${why.join(' · ')}</div><div class="small">${counts.get(i.id)} Outfits · ${(i.wears || []).length}× getragen</div></div></div>`).join('') : '<p>Nichts Auffälliges. Dein Schrank ist erstaunlich diszipliniert.</p>'}
+    <h2>Deine <em>Arbeitstiere</em></h2>
+    ${[...pool].sort((a, b) => counts.get(b.id) - counts.get(a.id)).slice(0, 6).map(i => `<div class="list-item" data-id="${i.id}"><div class="th"><img src="${imgURL(i)}"></div><div style="flex:1"><b>${esc(i.name || '')}</b><div class="small muted">${counts.get(i.id)} Outfits</div></div></div>`).join('')}`;
+  box.onclick = async e => {
+    const g = e.target.closest('[data-gap]'); if (g) { const st = missing[+g.dataset.gap].st; await addWishFromSuggestion({ name: st.name, cat: st.cat, colorHex: st.color, reason: `Capsule-Lücke (${se === 'hw' ? 'H/W' : 'F/S'})` }); const w = itemById(S.items[S.items.length - 1].id); w.formality = st.formality; w.warmth = st.warmth; w.seasons = [se]; await saveItem(w); g.textContent = '✓'; g.disabled = true; return; }
+    const li = e.target.closest('[data-id]'); if (li) itemSheet(li.dataset.id, () => go('capsule'));
+  };
+};
+
+// =========================================================
+// MEHR
+// =========================================================
+routes.mehr = () => {
+  view().innerHTML = `<header class="mast"><div class="kicker">Alles weitere</div><h1>Et <em>plus</em></h1></header>
+  <div class="grid2">
+    ${[['inspo', 'Pinterest & Ideen', 'Inspiration'], ['wunsch', 'Wunschliste & Kauf-Check', 'Shopping'], ['kalender', 'Kalender', 'Planen'], ['reisen', 'Reisen & Packliste', 'Unterwegs'], ['looks', 'Meine Looks', 'Gespeichert'], ['statistik', 'Statistik', 'Zahlen'], ['settings', 'Einstellungen', 'KI, Stadt, Backup']]
+      .map(([r, t, k]) => `<button class="menu-tile" data-r="${r}"><span class="kicker">${k}</span><span class="t">${t}</span></button>`).join('')}
+  </div>
+  ${!S.settings.apiKey ? `<div class="card plum" style="margin-top:16px"><div class="kicker">Tipp</div><p>Hinterlege einen kostenlosen Gemini-Schlüssel, damit die KI Teile erkennt, Selfies zerlegt und ehrlich bewertet.</p><button class="btn small" style="border-color:#fff;color:#fff" data-r="settings">Einrichten</button></div>` : ''}`;
+  view().onclick = e => { const b = e.target.closest('[data-r]'); if (b) go(b.dataset.r); };
+};
+
+// ---------- Inspiration ----------
+routes.inspo = async () => {
+  const v = view(); v.onclick = null;
+  v.innerHTML = `<header class="mast"><div class="kicker">Pinterest & eigene Bilder</div><h1>L'<em>Inspiration</em></h1></header>
+    <div class="card ${S.styleDNA ? 'forest' : ''}" id="dna"></div>
+    <div class="chips"><button class="chip ${S.ui.inspoTab === 'pinterest' ? 'on' : ''}" data-t="pinterest">Pinterest</button><button class="chip ${S.ui.inspoTab === 'own' ? 'on' : ''}" data-t="own">Eigene (${S.inspo.length})</button><div class="spacer"></div><button class="chip" id="addInspo">+ Bild</button></div>
+    <div id="ig"><div class="spin"></div></div>`;
+  const dna = $('#dna');
+  dna.innerHTML = S.styleDNA ? `<div class="kicker">Deine Stil-DNA</div><p style="font-family:var(--serif);font-size:19px;font-style:italic">${esc(S.styleDNA.summary)}</p>
+    <div class="small">${(S.styleDNA.keywords || []).map(k => `<span class="tag" style="background:rgba(255,255,255,.15);color:#fff;margin:2px">${esc(k)}</span>`).join(' ')}</div>
+    ${S.styleDNA.signatureItems?.length ? `<p class="small" style="margin-top:8px">Signature-Teile: ${esc(S.styleDNA.signatureItems.join(', '))}</p>` : ''}
+    ${S.styleDNA.colors?.length ? `<p class="small">Farben: ${esc(S.styleDNA.colors.join(', '))}</p>` : ''}
+    <button class="btn small" style="border-color:#fff;color:#fff;margin-top:8px" id="dnaBtn">Neu analysieren</button>`
+    : `<div class="kicker">Stil-DNA</div><p>Lass die KI deine Pins analysieren – danach bewertet sie Outfits nach <i>deinem</i> Geschmack.</p><button class="btn primary small" id="dnaBtn">Pins analysieren</button>`;
+  $('#dnaBtn').onclick = analyzeDNA;
+  $$('[data-t]').forEach(b => b.onclick = () => { S.ui.inspoTab = b.dataset.t; go('inspo'); });
+  $('#addInspo').onclick = async () => { const fs = await pickFiles(true); for (const f of fs) { const r = { id: uid(), img: await resizeBlob(f, 1200, 'image/jpeg', 0.88), created: iso() }; S.inspo.unshift(r); await DB.put('inspo', r); } S.ui.inspoTab = 'own'; go('inspo'); };
+  const ig = $('#ig');
+  let list = [];
+  if (S.ui.inspoTab === 'pinterest') {
+    const p = await loadPins();
+    list = (p.pins || []).map(x => ({ kind: 'pin', id: x.id, src: x.file || x.img, link: x.link }));
+    if (!list.length) { ig.innerHTML = emptyState('Noch keine Pins.', 'Die Pins deines Boards werden automatisch über GitHub geholt (alle 6 Stunden). Bis dahin kannst du eigene Bilder oder Screenshots hinzufügen.'); return; }
+  } else {
+    list = S.inspo.map(x => ({ kind: 'own', id: x.id, src: URL.createObjectURL(x.img), rec: x }));
+    if (!list.length) { ig.innerHTML = emptyState('Noch leer.', 'Füge Screenshots von Instagram, TikTok oder Pinterest hinzu.'); return; }
+  }
+  ig.innerHTML = `<div class="masonry">${list.map((x, i) => `<div data-i="${i}"><img loading="lazy" src="${esc(x.src)}" alt=""></div>`).join('')}</div>`;
+  ig.onclick = e => { const c = e.target.closest('[data-i]'); if (c) inspoSheet(list[+c.dataset.i]); };
+  if (p_sync()) { }
+  function p_sync() { return false; }
+};
+async function inspoBlob(x) { if (x.kind === 'own') return x.rec.img; const r = await fetch(x.src); if (!r.ok) throw new Error('Bild nicht ladbar'); return r.blob(); }
+function inspoSheet(x) {
+  const sh = openSheet(`<img src="${esc(x.src)}" style="border-radius:16px;max-height:420px;margin:0 auto">
+    <div class="row wrap" style="margin-top:12px"><button class="btn primary" id="recreate">Mit meinem Schrank nachstylen</button>
+    ${x.link ? `<a class="btn ghost" href="${esc(x.link)}" target="_blank" rel="noopener">Auf Pinterest</a>` : ''}
+    ${x.kind === 'own' ? `<button class="btn ghost" id="delI" style="color:var(--bad)">Löschen</button>` : ''}</div><div id="rc"></div>`);
+  $('#delI', sh.el)?.addEventListener('click', async () => { await DB.del('inspo', x.id); S.inspo = S.inspo.filter(i => i.id !== x.id); sh.close(); go('inspo'); });
+  $('#recreate', sh.el).onclick = async () => {
+    const rc = $('#rc', sh.el); rc.innerHTML = '<div class="spin"></div><p class="muted" style="text-align:center">Ich suche die passenden Teile in deinem Schrank …</p>';
+    try {
+      const res = await gemini({
+        system: SYS_STYLIST(), parts: [await imgPart(await inspoBlob(x), 1024), {
+          text: `Baue diesen Inspirations-Look so nah wie möglich mit Teilen AUS IHREM SCHRANK nach. Wähle je Rolle (top/bottom oder dress, shoes, optional mid, outer, bag) das beste Teil – nur IDs aus der Liste. Wenn nichts Passendes da ist, lass die Rolle weg und nenne das Teil unter missing.
+summary: 1-2 Sätze, was den Look ausmacht. tip: ein ehrlicher Styling-Tipp, wie sie den Look an ihren Deep-Autumn-Farbtyp anpasst. match: 1-10, wie nah die Nachbildung dran ist.
+Schrank (id|Kategorie|Name|Farbe|Muster|Formalität|Wärme|Saison):
+${closetSummary()}` }],
+        schema: {
+          type: 'OBJECT', properties: {
+            summary: { type: 'STRING' }, tip: { type: 'STRING' }, match: { type: 'NUMBER' },
+            picks: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: { type: 'STRING' }, reason: { type: 'STRING' } }, required: ['id'] } },
+            missing: { type: 'ARRAY', items: { type: 'OBJECT', properties: { name: { type: 'STRING' }, cat: { type: 'STRING', enum: CAT_IDS }, colorHex: { type: 'STRING' }, reason: { type: 'STRING' } }, required: ['name', 'cat'] } },
+          }, required: ['summary', 'picks', 'missing'],
+        },
+      });
+      const its = (res.picks || []).map(p => itemById(p.id)).filter(Boolean);
+      rc.innerHTML = `<div class="card"><div class="kicker">Nachgestylt${res.match ? ' · Treffer ' + res.match + '/10' : ''}</div><p>${esc(res.summary)}</p>
+        ${its.length ? `<div style="max-width:320px">${collage(its)}</div><button class="btn small" id="toStudio" style="margin-top:10px">Im Studio öffnen</button>` : '<p class="muted">Dafür hast du noch keine passenden Teile.</p>'}
+        ${res.tip ? `<p class="small" style="margin-top:10px"><i>Tipp:</i> ${esc(res.tip)}</p>` : ''}</div>
+        ${(res.missing || []).length ? `<h3>Dafür fehlt dir</h3>${res.missing.map((m, i) => `<div class="list-item" style="cursor:default"><span class="dot" style="width:28px;height:28px;background:${esc(m.colorHex || '#B08453')}"></span><div style="flex:1"><b>${esc(m.name)}</b><div class="small muted">${esc(m.reason || '')}</div></div><button class="btn small" data-mw="${i}">+ Wunsch</button></div>`).join('')}` : ''}`;
+      $('#toStudio', rc)?.addEventListener('click', () => { S.ui.studio = { preset: its.map(i => i.id) }; go('studio'); });
+      rc.onclick = async e => { const b = e.target.closest('[data-mw]'); if (b) { await addWishFromSuggestion(res.missing[+b.dataset.mw]); b.textContent = '✓'; b.disabled = true; } };
+    } catch (e) { rc.innerHTML = `<p>${esc(e.message)}</p>`; }
+  };
+}
+async function analyzeDNA() {
+  const sh = openSheet(''); withSpinner(sh, 'Ich studiere deine Pins …');
+  try {
+    const p = await loadPins(); const parts = [];
+    const pinList = (p.pins || []).slice(0, 14);
+    for (const x of pinList) { try { const r = await fetch(x.file || x.img); if (r.ok) parts.push(await imgPart(await r.blob(), 384)); } catch (e) { } }
+    for (const x of S.inspo.slice(0, Math.max(0, 16 - parts.length))) parts.push(await imgPart(x.img, 384));
+    if (!parts.length) throw new Error('Keine Pins oder Inspo-Bilder gefunden.');
+    parts.push({ text: `Das sind Outfit-Pins/Inspirationen deiner Kundin. Leite ihre Stil-DNA ab – konkret, nicht generisch. summary: 2 Sätze im Magazin-Ton. keywords: 5-8 Stichworte. signatureItems: 5-8 wiederkehrende Schlüsselteile. silhouettes: 2-4 typische Silhouetten. colors: wiederkehrende Farben. dos: 3 Dinge, die ihre Looks gut machen. donts: 3 Dinge, die in ihren Pins nie vorkommen.` });
+    const res = await gemini({
+      system: SYS_STYLIST(), parts, schema: {
+        type: 'OBJECT', properties: { summary: { type: 'STRING' }, keywords: { type: 'ARRAY', items: { type: 'STRING' } }, signatureItems: { type: 'ARRAY', items: { type: 'STRING' } }, silhouettes: { type: 'ARRAY', items: { type: 'STRING' } }, colors: { type: 'ARRAY', items: { type: 'STRING' } }, dos: { type: 'ARRAY', items: { type: 'STRING' } }, donts: { type: 'ARRAY', items: { type: 'STRING' } } }, required: ['summary', 'keywords', 'signatureItems'],
+      },
+    });
+    res.date = iso(); S.styleDNA = res; await kvSave('styleDNA', res); sh.close(); toast('Stil-DNA gespeichert.'); go('inspo');
+  } catch (e) { sh.el.innerHTML = `<h3>Hoppla</h3><p>${esc(e.message)}</p>`; }
+}
+
+// ---------- Wunschliste & Kauf-Check ----------
+routes.wunsch = () => {
+  const v = view(); v.onclick = null; const pool = closet(); const ws = wishes();
+  v.innerHTML = `<header class="mast"><div class="kicker">Erst denken, dann kaufen</div><h1>La <em>Wishlist</em></h1></header>
+    <p class="muted">Fotografiere ein Teil im Laden, mach einen Screenshot im Shop oder füge einen Link ein – ich sage dir, ob es sich lohnt.</p>
+    <button class="btn primary block" id="addW">+ Teil prüfen</button>
+    <div id="wl" style="margin-top:12px"></div>`;
+  $('#addW').onclick = () => addSheet({ wish: true });
+  $('#wl').innerHTML = ws.length ? ws.map(w => {
+    const n = countOutfitsWith(w, pool); const sim = pool.filter(o => o.cat === w.cat && dE(o._c.lab, w._c.lab) < 16);
+    const verdict = w._c.level === 'bad' ? ['bad', 'Lass es hängen – nicht deine Farbe.'] : sim.length >= 2 ? ['warn', `Hast du schon ${sim.length}× ähnlich.`] : n >= 12 ? ['', 'Lohnt sich – vielseitig kombinierbar.'] : n >= 4 ? ['warn', 'Okay – aber nicht unverzichtbar.'] : ['bad', 'Passt kaum zu deinem Schrank.'];
+    return `<div class="card" data-id="${w.id}" style="cursor:pointer"><div class="row" style="align-items:flex-start"><div class="th" style="width:84px;height:108px;flex:none;background:var(--card);border-radius:12px;border:1px solid var(--line);padding:4px"><img src="${imgURL(w)}" style="width:100%;height:100%;object-fit:contain"></div>
+      <div style="flex:1"><b>${esc(w.name || 'Wunschteil')}</b><div class="small muted">${CAT[w.cat]?.name}${w.brand ? ' · ' + esc(w.brand) : ''}${w.price ? ' · ' + eur(w.price) : ''}</div>
+      <div style="font-family:var(--serif);font-size:24px;margin-top:4px">+${n} <span style="font-size:14px">Outfits</span></div>
+      <span class="tag ${verdict[0]}">${verdict[1]}</span>
+      <div class="small" style="margin-top:4px"><span class="lvl-${w._c.level}">${LVL_ICON[w._c.level]} Farbe: ${LVL_TXT[w._c.level]}</span>${w.price && n ? ' · ' + eur(w.price / n) + ' pro Outfit' : ''}</div></div></div></div>`;
+  }).join('') : emptyState('Wunschlos glücklich?', 'Füge Teile hinzu, die du kaufen möchtest – z. B. die Jeans von Zara.');
+  $('#wl').onclick = e => { const c = e.target.closest('[data-id]'); if (c) itemSheet(c.dataset.id, () => go('wunsch')); };
+};
+function linkSheet() {
+  const sh = openSheet(`<h3>Produktlink</h3><p class="small muted">Kopiere den Link aus der Shop-App oder Safari (Teilen → Kopieren).</p>
+    <input class="in" id="url" placeholder="https://www.zara.com/…" inputmode="url"><button class="btn primary block" id="go" style="margin-top:10px">Analysieren</button><div id="lr"></div>`);
+  $('#go', sh.el).onclick = async () => {
+    const url = $('#url', sh.el).value.trim(); if (!/^https?:\/\//.test(url)) { toast('Bitte einen vollständigen Link einfügen.'); return; }
+    const lr = $('#lr', sh.el); lr.innerHTML = '<div class="spin"></div>';
+    let t = {};
+    try {
+      t = await gemini({
+        tools: [{ url_context: {} }], temperature: 0.1, schema: true, parts: [{
+          text: `Öffne diese Produktseite und gib NUR ein JSON-Objekt zurück (ohne Erklärung) mit: name (deutscher kurzer Produktname), brand, price (Zahl in EUR oder null), cat (eins von ${CAT_IDS.join(',')}), sportSlot, colorName (deutsch), colorHex (#RRGGBB), pattern (eins von ${PATTERNS.join(',')}), formality (1-5), warmth (1-5), seasons (Array aus fs/hw), occasions (Array aus ${OCC_IDS.join(',')}).\nURL: ${url}`,
+        }],
+      });
+    } catch (e) { lr.innerHTML = `<p class="small">${esc(e.message)} – du kannst die Angaben auch selbst ausfüllen.</p>`; }
+    const it = applyAI(newItemBase({ wish: true, link: url }), t || {});
+    if (t?.price) it.price = Number(t.price) || null;
+    if (/^#[0-9a-f]{6}$/i.test(t?.colorHex || '')) it.color = t.colorHex;
+    it.colorName = it.colorName || colorInfo(it.color).name;
+    sh.close();
+    const ed = openSheet(`<div class="kicker">Wunschteil</div><h3>${esc(it.name || 'Neues Wunschteil')}</h3><p class="small muted">Prüfe die Angaben. Ein Screenshot vom Produktbild macht den Kauf-Check im Studio noch besser.</p>
+      <button class="btn block" id="shot">Screenshot / Foto hinzufügen</button>${fieldsHTML(it)}<button class="btn primary block" id="sv" style="margin-top:14px">Auf die Wunschliste</button>`);
+    bindFields(ed.el, it);
+    $('#shot', ed.el).onclick = async () => { const [f] = await pickFiles(false); if (!f) return; $('#shot', ed.el).textContent = 'Stelle frei …'; try { it.img = await removeBg(f); } catch (e) { it.img = await resizeBlob(f, 900); } it.color = await dominantColor(it.img); it.colorName = colorInfo(it.color).name; $('#shot', ed.el).textContent = 'Bild ✓'; };
+    $('#sv', ed.el).onclick = async () => { await saveItem(it); ed.close(); go('wunsch'); };
+  };
+}
+
+// ---------- Kalender ----------
+routes.kalender = async () => {
+  const v = view(); v.onclick = null;
+  const base = S.ui.calMonth ? parseISO(S.ui.calMonth) : new Date(); const y = base.getFullYear(), m = base.getMonth();
+  const first = new Date(y, m, 1); const startOff = (first.getDay() + 6) % 7; const days = new Date(y, m + 1, 0).getDate();
+  const cells = []; for (let i = 0; i < startOff; i++) cells.push(null); for (let d = 1; d <= days; d++) cells.push(new Date(y, m, d));
+  const today = iso();
+  v.innerHTML = `<header class="mast"><div class="kicker">Planen & Tragen</div><h1>Le <em>Calendrier</em></h1></header>
+    <div class="row" style="margin:6px 0 10px"><button class="iconbtn" id="pm">‹</button><div class="spacer" style="text-align:center;font-family:var(--serif);font-size:22px">${MONTHS[m]} ${y}</div><button class="iconbtn" id="nm">›</button></div>
+    <div class="cal">${['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(d => `<div class="dh">${d}</div>`).join('')}
+    ${cells.map(d => { if (!d) return '<div></div>'; const k = iso(d); const p = S.plans[k]; return `<div class="d ${k === today ? 'today' : ''}" data-d="${k}">${d.getDate()}${p ? `<span class="mk ${p.worn ? 'worn' : ''}"></span>` : ''}</div>`; }).join('')}</div>
+    <p class="small muted" style="margin-top:10px"><span class="dot" style="background:var(--forest)"></span> geplant · <span class="dot" style="background:var(--plum)"></span> getragen</p>
+    <h2>Diese <em>Woche</em></h2><div id="wk"></div>`;
+  $('#pm').onclick = () => { S.ui.calMonth = iso(new Date(y, m - 1, 1)); go('kalender'); };
+  $('#nm').onclick = () => { S.ui.calMonth = iso(new Date(y, m + 1, 1)); go('kalender'); };
+  $('.cal').onclick = e => { const d = e.target.closest('[data-d]'); if (d) daySheet(d.dataset.d); };
+  const wk = []; for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() + i); wk.push(iso(d)); }
+  let wx = null; try { wx = await myWeather(); } catch (e) { }
+  $('#wk').innerHTML = wk.map(k => { const p = S.plans[k]; const t = dayTemp(wx, k); const its = (p?.itemIds || []).map(itemById).filter(Boolean); return `<div class="list-item" data-d="${k}"><div style="width:64px"><b>${WDAYS[parseISO(k).getDay()].slice(0, 2)}</b> <span class="small muted">${fmtShort(parseISO(k))}</span>${t ? `<div class="small muted">${wmo(t.code)[1]} ${Math.round(t.max)}°</div>` : ''}</div><div style="flex:1;display:flex;gap:4px">${its.length ? its.slice(0, 5).map(i => `<img src="${imgURL(i)}" style="width:42px;height:52px;object-fit:contain;background:var(--card);border-radius:8px">`).join('') : '<span class="small muted">nichts geplant</span>'}</div></div>`; }).join('');
+  $('#wk').onclick = e => { const d = e.target.closest('[data-d]'); if (d) daySheet(d.dataset.d); };
+};
+async function daySheet(date) {
+  const p = S.plans[date]; const its = (p?.itemIds || []).map(itemById).filter(Boolean); const isPast = date <= iso();
+  let wx = null; try { wx = await myWeather(); } catch (e) { }
+  const t = dayTemp(wx, date);
+  const sh = openSheet(`<div class="kicker">${fmtLong(parseISO(date))}${t ? ` · ${wmo(t.code)[1]} ${Math.round(t.min)}–${Math.round(t.max)}°` : ''}</div><h2 style="margin-top:4px">${p ? (p.worn ? 'Getragen' : 'Geplant') : 'Noch <em>frei</em>'}</h2>
+    ${its.length ? `<div style="max-width:300px">${collage(its)}</div>` : ''}
+    <label class="f">Anlass</label><div class="seg" id="docc">${OCC.map(o => `<button data-o="${o.id}" class="${o.id === (p?.occasion || S.ui.occ) ? 'on' : ''}">${o.name}</button>`).join('')}</div>
+    <div class="row wrap" style="margin-top:12px"><button class="btn primary small" data-a="sugg">Vorschlag</button><button class="btn small" data-a="saved">Aus meinen Looks</button>
+    ${its.length && isPast && !p.worn ? '<button class="btn small" data-a="worn">Als getragen markieren</button>' : ''}${p ? '<button class="btn ghost small" data-a="clear">Entfernen</button>' : ''}</div><div id="dres"></div>`);
+  let occ = p?.occasion || S.ui.occ;
+  $('#docc', sh.el).onclick = e => { const b = e.target.closest('[data-o]'); if (!b) return; occ = b.dataset.o; $$('#docc button', sh.el).forEach(x => x.classList.toggle('on', x === b)); };
+  const setPlan = async (itemIds) => { const np = { date, itemIds, occasion: occ, worn: false }; S.plans[date] = np; await DB.put('plans', np); toast('Eingeplant.'); sh.close(); go(current); };
+  sh.el.addEventListener('click', async e => {
+    const a = e.target.closest('[data-a]')?.dataset.a; if (!a) return; const res = $('#dres', sh.el);
+    if (a === 'sugg') {
+      const r = suggest({ occasion: occ, temp: t ? t.feel : null, n: 3 });
+      res.innerHTML = r.length ? r.map((x, i) => `<div class="card" data-k="${i}">${collage(x.items)}<div class="row" style="margin-top:8px"><span class="score" style="font-size:26px">${String(x.ev.total).replace('.', ',')}</span><div class="spacer"></div><button class="btn primary small" data-pick="${i}">Nehmen</button></div></div>`).join('') : '<p>Keine Kombination möglich.</p>';
+      res.onclick = ev => { const b = ev.target.closest('[data-pick]'); if (b) setPlan(r[+b.dataset.pick].items.map(i => i.id)); };
+    }
+    if (a === 'saved') {
+      res.innerHTML = S.outfits.length ? `<div class="grid2">${S.outfits.map((o, i) => `<div data-o="${i}" style="cursor:pointer">${collage(o.itemIds.map(itemById).filter(Boolean))}</div>`).join('')}</div>` : '<p class="muted">Noch keine gespeicherten Looks – speichere welche im Studio (♥).</p>';
+      res.onclick = ev => { const b = ev.target.closest('[data-o]'); if (b) setPlan(S.outfits[+b.dataset.o].itemIds); };
+    }
+    if (a === 'worn') { await markWorn(date, p.itemIds); toast('Getragen ✓'); sh.close(); go(current); }
+    if (a === 'clear') {
+      if (p.worn) for (const id of p.itemIds) { const it = itemById(id); if (it) { it.wears = (it.wears || []).filter(d => d !== date); await saveItem(it); } }
+      delete S.plans[date]; await DB.del('plans', date); sh.close(); go(current);
+    }
+  });
+}
+
+// ---------- Meine Looks ----------
+routes.looks = () => {
+  const v = view(); v.onclick = null;
+  v.innerHTML = `<header class="mast"><div class="kicker">${S.outfits.length} gespeichert</div><h1>Mes <em>Looks</em></h1></header><div id="lk"></div>`;
+  $('#lk').innerHTML = S.outfits.length ? `<div class="grid2">${S.outfits.map((o, i) => { const its = o.itemIds.map(itemById).filter(Boolean); return `<div data-i="${i}" style="cursor:pointer">${collage(its)}<div class="small" style="margin-top:4px">${o.occasion ? OCCM[o.occasion]?.name + ' · ' : ''}${String(o.score || '').replace('.', ',')}/10</div></div>`; }).join('')}</div>` : emptyState('Noch keine Looks.', 'Stell im Studio ein Outfit zusammen und tippe auf das Herz.');
+  $('#lk').onclick = e => {
+    const c = e.target.closest('[data-i]'); if (!c) return; const o = S.outfits[+c.dataset.i]; const its = o.itemIds.map(itemById).filter(Boolean);
+    const sh = openSheet(`<div style="max-width:360px;margin:0 auto">${collage(its)}</div><div class="row wrap" style="margin-top:12px"><button class="btn primary small" data-a="wear">Heute tragen</button><button class="btn small" data-a="studio">Im Studio</button><button class="btn ghost small" data-a="del" style="color:var(--bad)">Löschen</button></div>`);
+    sh.el.onclick = async ev => {
+      const a = ev.target.closest('[data-a]')?.dataset.a; if (!a) return;
+      if (a === 'wear') { await markWorn(iso(), o.itemIds, o.id); toast('Getragen ✓'); sh.close(); }
+      if (a === 'studio') { S.ui.studio = { preset: o.itemIds, occasion: o.occasion }; go('studio'); }
+      if (a === 'del') { S.outfits = S.outfits.filter(x => x.id !== o.id); await DB.del('outfits', o.id); sh.close(); go('looks'); }
+    };
+  };
+};
+
+// ---------- Reisen ----------
+routes.reisen = () => {
+  const v = view(); v.onclick = null;
+  v.innerHTML = `<header class="mast"><div class="kicker">Städtetrips & Packliste</div><h1>Le <em>Voyage</em></h1></header>
+    <button class="btn primary block" id="nt">+ Neue Reise planen</button><div id="tl" style="margin-top:12px"></div>`;
+  $('#nt').onclick = tripForm;
+  $('#tl').innerHTML = S.trips.length ? [...S.trips].sort((a, b) => a.start < b.start ? 1 : -1).map(t => `<div class="list-item" data-id="${t.id}"><div style="flex:1"><b style="font-family:var(--serif);font-size:20px">${esc(t.city.name)}</b><div class="small muted">${fmtShort(parseISO(t.start))} – ${fmtShort(parseISO(t.end))} · ${t.packed.length} Teile · ${t.days.length} Tage</div></div><span>›</span></div>`).join('') : emptyState('Wohin geht\'s?', 'Ich plane mit dem Wetter vor Ort möglichst viele Outfits aus möglichst wenigen Teilen.');
+  $('#tl').onclick = e => { const c = e.target.closest('[data-id]'); if (c) tripSheet(S.trips.find(t => t.id === c.dataset.id)); };
+};
+function tripForm() {
+  const d0 = new Date(); d0.setDate(d0.getDate() + 7); const d1 = new Date(d0); d1.setDate(d1.getDate() + 3);
+  const f = { city: null, start: iso(d0), end: iso(d1), ev: { restaurant: 2, bar: 1, buero: 0, pilates: 0 } };
+  const sh = openSheet(`<h2>Neue <em>Reise</em></h2>
+    <label class="f">Stadt</label><input class="in" id="cq" placeholder="z. B. Paris"><div id="cr"></div>
+    <div class="grid2"><div><label class="f">Von</label><input type="date" class="in" id="ds" value="${f.start}"></div><div><label class="f">Bis</label><input type="date" class="in" id="de" value="${f.end}"></div></div>
+    <label class="f">Was steht an? (neben Sightseeing)</label>
+    ${[['restaurant', 'Restaurant-Abende'], ['bar', 'Bar-Abende'], ['buero', 'Business-Termine'], ['pilates', 'Pilates / Sport']].map(([k, n]) => `<div class="row" style="padding:6px 0"><span style="flex:1">${n}</span><button class="iconbtn" data-m="${k}">−</button><b id="c_${k}" style="width:24px;text-align:center">${f.ev[k]}</b><button class="iconbtn" data-p="${k}">+</button></div>`).join('')}
+    <button class="btn primary block" id="plan" style="margin-top:14px">Packliste erstellen</button><div id="pr"></div>`);
+  let tmr = null;
+  $('#cq', sh.el).oninput = e => { clearTimeout(tmr); const q = e.target.value.trim(); if (q.length < 2) return; tmr = setTimeout(async () => { const r = await geocode(q).catch(() => []); $('#cr', sh.el).innerHTML = r.map((c, i) => `<div class="list-item" data-c="${i}"><div><b>${esc(c.name)}</b> <span class="small muted">${esc(c.region)}</span></div></div>`).join(''); $('#cr', sh.el).onclick = ev => { const b = ev.target.closest('[data-c]'); if (!b) return; f.city = r[+b.dataset.c]; $('#cq', sh.el).value = f.city.name; $('#cr', sh.el).innerHTML = ''; }; }, 350); };
+  sh.el.addEventListener('click', e => {
+    const m = e.target.closest('[data-m]'), p = e.target.closest('[data-p]');
+    if (m) { f.ev[m.dataset.m] = Math.max(0, f.ev[m.dataset.m] - 1); $('#c_' + m.dataset.m, sh.el).textContent = f.ev[m.dataset.m]; }
+    if (p) { f.ev[p.dataset.p] = Math.min(10, f.ev[p.dataset.p] + 1); $('#c_' + p.dataset.p, sh.el).textContent = f.ev[p.dataset.p]; }
+  });
+  $('#plan', sh.el).onclick = async () => {
+    f.start = $('#ds', sh.el).value; f.end = $('#de', sh.el).value;
+    if (!f.city) { toast('Bitte eine Stadt aus der Liste wählen.'); return; }
+    if (!f.start || !f.end || f.end < f.start) { toast('Bitte gültige Daten wählen.'); return; }
+    const pr = $('#pr', sh.el); pr.innerHTML = '<div class="spin"></div><p class="muted" style="text-align:center">Wetter abrufen & Koffer packen …</p>';
+    try { const t = await planTrip(f); S.trips.push(t); await DB.put('trips', t); sh.close(); go('reisen'); tripSheet(t); }
+    catch (e) { pr.innerHTML = `<p>${esc(e.message)}</p>`; }
+  };
+}
+async function planTrip(f) {
+  const dates = []; for (let d = parseISO(f.start); iso(d) <= f.end; d.setDate(d.getDate() + 1)) dates.push(iso(d));
+  if (dates.length > 21) throw new Error('Maximal 21 Tage.');
+  let temps = {}; let source = 'Vorhersage';
+  try {
+    const fc = await forecast(f.city.lat, f.city.lon);
+    for (const k of dates) { const t = dayTemp(fc, k); if (t) temps[k] = t; }
+  } catch (e) { }
+  if (Object.keys(temps).length < dates.length) {
+    try { const pa = await pastYear(f.city.lat, f.city.lon, f.start, f.end); source = Object.keys(temps).length ? 'Vorhersage + Vorjahr' : 'Wetter vom Vorjahr';
+      pa.daily.time.forEach((t, i) => { const k = dates[i]; if (k && !temps[k]) temps[k] = { max: pa.daily.temperature_2m_max[i], min: pa.daily.temperature_2m_min[i], code: pa.daily.weather_code[i], feel: pa.daily.temperature_2m_max[i] * 0.65 + pa.daily.temperature_2m_min[i] * 0.35, past: true }; });
+    } catch (e) { }
+  }
+  // Ereignisse verteilen
+  const events = dates.map(k => ({ date: k, slot: 'Tag', occasion: 'trip', temp: temps[k]?.feel ?? null }));
+  const evenings = []; for (const [occ, n] of Object.entries(f.ev)) for (let i = 0; i < n; i++) evenings.push(occ);
+  const order = evenings.filter(o => o === 'restaurant' || o === 'bar'); const dayEv = evenings.filter(o => o === 'buero' || o === 'pilates');
+  order.forEach((o, i) => { const k = dates[(dates.length - 1 - i % dates.length + dates.length) % dates.length]; const tm = temps[k]; events.push({ date: k, slot: 'Abend', occasion: o, temp: tm ? tm.min + (tm.max - tm.min) * 0.35 : null }); });
+  dayEv.forEach((o, i) => { const k = dates[i % dates.length]; const tm = temps[k]; events.push({ date: k, slot: o === 'pilates' ? 'Morgens' : 'Termin', occasion: o, temp: tm?.feel ?? null }); });
+  events.sort((a, b) => a.date.localeCompare(b.date) || ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(a.slot) - ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(b.slot));
+  const packed = new Set(); const plan = [];
+  const prio = [...events].sort((a, b) => (a.occasion === 'trip' ? 1 : 0) - (b.occasion === 'trip' ? 1 : 0));
+  const limit = { shoes: 3, bag: 2, outer: 1 };
+  for (const ev of prio) {
+    const res = suggest({ occasion: ev.occasion, temp: ev.temp, n: 1, prefer: packed, tries: 350 });
+    let r = res[0];
+    if (r) {
+      // Limits für sperrige Teile einhalten
+      for (const s of Object.keys(limit)) { const have = [...packed].map(itemById).filter(i => i && slotOf(i) === s); const it = r.items.find(i => slotOf(i) === s); if (it && !packed.has(it.id) && have.length >= limit[s]) { const alt = have.find(h => r.items.filter(i => i !== it).every(o => compat(h, o))); r.items = r.items.map(i => i === it ? (alt || i) : i); } }
+      r.items.forEach(i => packed.add(i.id));
+      plan.push({ ...ev, itemIds: r.items.map(i => i.id), score: evaluate(r.items, { occasion: ev.occasion, temp: ev.temp }).total });
+    } else plan.push({ ...ev, itemIds: [], score: 0 });
+  }
+  plan.sort((a, b) => a.date.localeCompare(b.date) || ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(a.slot) - ['Morgens', 'Tag', 'Termin', 'Abend'].indexOf(b.slot));
+  const n = dates.length; const minT = Math.min(...Object.values(temps).map(t => t.min ?? 10));
+  const extras = [`Unterwäsche (${n + 1}×)`, `Socken (${n + 1}×)`, 'Schlafsachen', 'Kulturbeutel & Make-up', 'Schmuck', 'Ladekabel & Powerbank', 'Ausweis & Karten', ...(f.ev.pilates ? ['Pilates-Socken & Leggings', 'Haargummi'] : []), ...(minT < 6 ? ['Schal, Mütze, Handschuhe'] : []), ...(Object.values(temps).some(t => [61, 63, 65, 80, 81, 82].includes(t.code)) ? ['Schirm'] : []), ...(Object.values(temps).some(t => t.max > 24) ? ['Sonnenbrille & Sonnencreme'] : [])];
+  return { id: uid(), city: f.city, start: f.start, end: f.end, ev: f.ev, days: dates, temps, source, plan, packed: [...packed], extras, checked: [] };
+}
+function tripSheet(t) {
+  const items = t.packed.map(itemById).filter(Boolean); const grp = {}; items.forEach(i => { (grp[i.cat] = grp[i.cat] || []).push(i); });
+  const tv = Object.values(t.temps || {});
+  const sh = openSheet(`<div class="kicker">${fmtShort(parseISO(t.start))} – ${fmtShort(parseISO(t.end))} · ${esc(t.source || '')}</div><h2 style="margin-top:4px">${esc(t.city.name)}</h2>
+    ${tv.length ? `<p class="muted">${Math.round(Math.min(...tv.map(x => x.min)))}° bis ${Math.round(Math.max(...tv.map(x => x.max)))}° · ${items.length} Teile für ${t.plan.filter(p => p.itemIds.length).length} Looks</p>` : ''}
+    <h3 style="margin-top:14px">Looks</h3>
+    ${t.plan.map(p => { const its = p.itemIds.map(itemById).filter(Boolean); const tm = t.temps?.[p.date]; return `<div class="card"><div class="row"><b>${WDAYS[parseISO(p.date).getDay()].slice(0, 2)} ${fmtShort(parseISO(p.date))} · ${p.slot}</b><div class="spacer"></div><span class="small muted">${OCCM[p.occasion]?.name || ''}${tm ? ' · ' + wmo(tm.code)[1] + ' ' + Math.round(tm.max) + '°' : ''}</span></div>${its.length ? `<div style="max-width:260px;margin-top:8px">${collage(its)}</div>` : '<p class="small muted">Dafür fehlen passende Teile.</p>'}</div>`; }).join('')}
+    <h3 style="margin-top:14px">Packliste</h3>
+    <div id="pl">${Object.entries(grp).map(([c, arr]) => `<div class="kicker" style="margin-top:10px">${CAT[c].name}</div>${arr.map(i => `<label class="check"><input type="checkbox" data-k="${i.id}" ${t.checked.includes(i.id) ? 'checked' : ''}><img src="${imgURL(i)}" style="width:36px;height:44px;object-fit:contain"><span>${esc(i.name || '')}</span></label>`).join('')}`).join('')}
+    <div class="kicker" style="margin-top:10px">Außerdem</div>${t.extras.map(x => `<label class="check"><input type="checkbox" data-k="${esc(x)}" ${t.checked.includes(x) ? 'checked' : ''}><span>${esc(x)}</span></label>`).join('')}</div>
+    <hr><button class="btn ghost block" id="delT" style="color:var(--bad)">Reise löschen</button>`);
+  $('#pl', sh.el).onchange = async e => { const k = e.target.dataset.k; if (!k) return; t.checked = e.target.checked ? [...new Set([...t.checked, k])] : t.checked.filter(x => x !== k); await DB.put('trips', t); };
+  $('#delT', sh.el).onclick = async () => { if (await confirmSheet('Reise löschen?', 'Löschen', true)) { S.trips = S.trips.filter(x => x.id !== t.id); await DB.del('trips', t.id); sh.close(); go('reisen'); } };
+}
+
+// ---------- Statistik ----------
+routes.statistik = () => {
+  const v = view(); v.onclick = null; const all = closet();
+  const worn = all.filter(i => (i.wears || []).length); const value = all.reduce((s, i) => s + (i.price || 0), 0);
+  const top = [...all].sort((a, b) => (b.wears || []).length - (a.wears || []).length).slice(0, 5);
+  const cpw = all.filter(i => i.price).map(i => ({ i, c: i.price / Math.max(1, (i.wears || []).length) })).sort((a, b) => b.c - a.c).slice(0, 6);
+  const lv = { good: 0, ok: 0, bad: 0 }; all.forEach(i => lv[i._c.level]++);
+  const maxCat = Math.max(1, ...CATS.map(c => all.filter(i => i.cat === c.id).length));
+  v.innerHTML = `<header class="mast"><div class="kicker">In Zahlen</div><h1>Les <em>Chiffres</em></h1></header>
+    <div class="grid2">
+      <div class="card" style="margin:0"><div class="kicker">Teile</div><div class="score">${all.length}</div></div>
+      <div class="card" style="margin:0"><div class="kicker">Schrankwert</div><div class="score" style="font-size:30px">${value ? eur(value) : '–'}</div></div>
+      <div class="card" style="margin:0"><div class="kicker">Schon getragen</div><div class="score">${all.length ? Math.round(worn.length / all.length * 100) : 0}<small>%</small></div></div>
+      <div class="card" style="margin:0"><div class="kicker">Deep Autumn</div><div class="score">${all.length ? Math.round(lv.good / all.length * 100) : 0}<small>%</small></div></div>
+    </div>
+    <div class="card"><div class="kicker">Farbtyp-Check</div><div class="bar" style="height:14px;display:flex;margin-top:8px"><i style="width:${all.length ? lv.good / all.length * 100 : 0}%;background:var(--good)"></i><i style="width:${all.length ? lv.ok / all.length * 100 : 0}%;background:var(--mustard)"></i><i style="width:${all.length ? lv.bad / all.length * 100 : 0}%;background:var(--bad)"></i></div>
+      <div class="small" style="margin-top:6px"><span class="lvl-good">✓ ${lv.good} steht dir</span> · <span class="lvl-ok">◐ ${lv.ok} geht</span> · <span class="lvl-bad">✕ ${lv.bad} eher nicht</span></div>
+      <div class="swatch-row" style="margin-top:10px">${all.map(i => `<span style="background:${i.color}"></span>`).join('')}</div></div>
+    <div class="card"><div class="kicker">Kategorien</div>${CATS.map(c => { const n = all.filter(i => i.cat === c.id).length; return `<div class="row small" style="margin-top:6px"><span style="width:150px">${c.name}</span><div class="bar" style="flex:1"><i style="width:${n / maxCat * 100}%"></i></div><span style="width:28px;text-align:right">${n}</span></div>`; }).join('')}</div>
+    <h2>Meist <em>getragen</em></h2>${top.filter(i => (i.wears || []).length).map(i => `<div class="list-item" data-id="${i.id}"><div class="th"><img src="${imgURL(i)}"></div><div style="flex:1"><b>${esc(i.name || '')}</b><div class="small muted">${(i.wears || []).length}× getragen</div></div></div>`).join('') || '<p class="muted">Markiere Outfits als getragen – dann füllt sich das hier.</p>'}
+    <h2>Teuer pro <em>Tragen</em></h2>${cpw.map(({ i, c }) => `<div class="list-item" data-id="${i.id}"><div class="th"><img src="${imgURL(i)}"></div><div style="flex:1"><b>${esc(i.name || '')}</b><div class="small muted">${eur(i.price)} · ${(i.wears || []).length}× getragen</div></div><b>${eur(c)}</b></div>`).join('') || '<p class="muted">Trage Preise bei deinen Teilen ein.</p>'}`;
+  v.onclick = e => { const c = e.target.closest('[data-id]'); if (c) itemSheet(c.dataset.id, () => go('statistik')); };
+};
+
+// ---------- Einstellungen ----------
+function citySheet(after) {
+  const sh = openSheet(`<h3>Deine Stadt</h3><input class="in" id="cq" placeholder="Stadt suchen"><div id="cr"></div><button class="btn block" id="geo" style="margin-top:10px">Aktuellen Standort verwenden</button>`, { onClose: after });
+  let tmr = null;
+  $('#cq', sh.el).oninput = e => { clearTimeout(tmr); const q = e.target.value.trim(); if (q.length < 2) return; tmr = setTimeout(async () => { const r = await geocode(q).catch(() => []); $('#cr', sh.el).innerHTML = r.map((c, i) => `<div class="list-item" data-c="${i}"><div><b>${esc(c.name)}</b> <span class="small muted">${esc(c.region)}</span></div></div>`).join(''); $('#cr', sh.el).onclick = async ev => { const b = ev.target.closest('[data-c]'); if (!b) return; S.settings.city = r[+b.dataset.c]; S.weather = null; await kvSave('settings', S.settings); sh.close(); }; }, 350); };
+  $('#geo', sh.el).onclick = () => navigator.geolocation.getCurrentPosition(async p => { S.settings.city = { name: 'Mein Standort', lat: +p.coords.latitude.toFixed(3), lon: +p.coords.longitude.toFixed(3) }; S.weather = null; await kvSave('settings', S.settings); sh.close(); }, () => toast('Standort nicht verfügbar.'));
+}
+routes.settings = async () => {
+  const v = view(); v.onclick = null;
+  let persisted = false; try { persisted = await navigator.storage?.persisted?.(); } catch (e) { }
+  let est = null; try { est = await navigator.storage?.estimate?.(); } catch (e) { }
+  v.innerHTML = `<header class="mast"><div class="kicker">Réglages</div><h1>Einstel<em>lungen</em></h1></header>
+    <div class="card"><h3>KI (Google Gemini – gratis)</h3>
+      <p class="small muted">1. Öffne <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> und melde dich mit Google an. 2. „API-Schlüssel erstellen“. 3. Hier einfügen. Der Schlüssel bleibt nur auf diesem iPhone. Hinweis: In der Gratis-Stufe darf Google die gesendeten Bilder zur Verbesserung nutzen; es gibt ein Tageslimit.</p>
+      <label class="f">API-Schlüssel</label><input class="in" id="key" type="password" autocomplete="off" value="${esc(S.settings.apiKey)}" placeholder="AIza…">
+      <label class="f">Modell</label><input class="in" id="model" value="${esc(S.settings.model)}">
+      <div class="row" style="margin-top:10px"><button class="btn primary small" id="saveKey">Speichern</button><button class="btn small" id="testKey">Testen</button><span class="small" id="kres"></span></div></div>
+    <div class="card"><h3>Stadt fürs Wetter</h3><p>${S.settings.city ? esc(S.settings.city.name) : '<span class="muted">nicht gesetzt</span>'}</p><button class="btn small" id="city">Ändern</button></div>
+    <div class="card"><h3>Mein Stilprofil</h3><p class="small muted">Danach richtet sich die KI-Bewertung. Ändere es, wenn sich dein Stil weiterentwickelt.</p><textarea class="in" id="prof" style="min-height:200px">${esc(S.settings.profile)}</textarea><button class="btn small" id="saveProf" style="margin-top:8px">Profil speichern</button></div>
+    <div class="card"><h3>Backup</h3><p class="small muted">Alles liegt nur in diesem Browser. Mach regelmäßig ein Backup (z. B. in iCloud Drive), damit nichts verloren geht. ${est ? `Belegt: ${(est.usage / 1048576).toFixed(1)} MB.` : ''} ${persisted ? '✓ Dauerhafter Speicher aktiv.' : ''}</p>
+      <div class="row wrap"><button class="btn small" id="exp">Backup exportieren</button><button class="btn small" id="imp">Backup importieren</button></div></div>
+    <div class="card"><h3>Pinterest</h3><p class="small muted">Dein Board wird über GitHub Actions automatisch alle 6 Stunden abgeholt. ${S.pins?.updated ? 'Zuletzt: ' + esc(S.pins.updated.slice(0, 16).replace('T', ' ')) : ''}</p></div>
+    <div class="card"><h3>Abgelehnte Kombis</h3><p class="small muted">${S.rejected.length} Kombinationen werden nicht mehr vorgeschlagen.</p><button class="btn small" id="clrRej">Zurücksetzen</button></div>
+    <button class="btn ghost block" id="wipe" style="color:var(--bad);margin:10px 0 30px">Alle Daten löschen</button>`;
+  $('#saveKey').onclick = async () => { S.settings.apiKey = $('#key').value.trim(); S.settings.model = $('#model').value.trim() || 'gemini-flash-latest'; await kvSave('settings', S.settings); toast('Gespeichert.'); };
+  $('#testKey').onclick = async () => { $('#saveKey').click(); $('#kres').textContent = '…'; try { const t = await gemini({ parts: [{ text: 'Antworte nur mit: Bonjour!' }], temperature: 0 }); $('#kres').textContent = '✓ ' + t.trim().slice(0, 30); } catch (e) { $('#kres').textContent = '✕ ' + e.message; } };
+  $('#city').onclick = () => citySheet(() => go('settings'));
+  $('#saveProf').onclick = async () => { S.settings.profile = $('#prof').value; await kvSave('settings', S.settings); toast('Profil gespeichert.'); };
+  $('#clrRej').onclick = async () => { S.rejected = []; await kvSave('rejected', []); toast('Zurückgesetzt.'); go('settings'); };
+  $('#exp').onclick = exportBackup; $('#imp').onclick = importBackup;
+  $('#wipe').onclick = async () => {
+    if (!await confirmSheet('Wirklich ALLE Teile, Looks und Einstellungen löschen? Das kann nicht rückgängig gemacht werden.', 'Alles löschen', true)) return;
+    for (const s of ['items', 'outfits', 'plans', 'trips', 'kv', 'inspo']) await DB.clear(s);
+    location.reload();
+  };
+};
+async function exportBackup() {
+  toast('Backup wird erstellt …');
+  const items = []; for (const it of S.items) { const o = stripPrivate(it); if (o.img instanceof Blob) o.img = await blobToDataURL(o.img); items.push(o); }
+  const inspo = []; for (const x of S.inspo) inspo.push({ ...x, img: await blobToDataURL(x.img) });
+  const data = { app: 'armoire', version: 1, date: new Date().toISOString(), items, outfits: S.outfits, plans: Object.values(S.plans), trips: S.trips, inspo, kv: { settings: { ...S.settings, apiKey: '' }, styleDNA: S.styleDNA, rejected: S.rejected } };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }); const name = `armoire-backup-${iso()}.json`;
+  const file = new File([blob], name, { type: 'application/json' });
+  if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: 'Armoire Backup' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+function importBackup() {
+  const inp = $('#fileJson'); inp.value = '';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text()); if (d.app !== 'armoire') throw new Error('Keine Armoire-Datei.');
+      if (!await confirmSheet(`Backup vom ${d.date?.slice(0, 10)} mit ${d.items.length} Teilen importieren? Vorhandene Teile mit gleicher ID werden überschrieben.`, 'Importieren')) return;
+      for (const it of d.items) { if (typeof it.img === 'string' && it.img.startsWith('data:')) it.img = await dataURLToBlob(it.img); await DB.put('items', it); }
+      for (const x of d.inspo || []) { x.img = await dataURLToBlob(x.img); await DB.put('inspo', x); }
+      for (const o of d.outfits || []) await DB.put('outfits', o);
+      for (const p of d.plans || []) await DB.put('plans', p);
+      for (const t of d.trips || []) await DB.put('trips', t);
+      const key = S.settings.apiKey;
+      if (d.kv?.settings) await kvSave('settings', { ...d.kv.settings, apiKey: key || d.kv.settings.apiKey || '' });
+      if (d.kv?.styleDNA) await kvSave('styleDNA', d.kv.styleDNA);
+      if (d.kv?.rejected) await kvSave('rejected', d.kv.rejected);
+      toast('Import fertig.'); setTimeout(() => location.reload(), 800);
+    } catch (e) { toast('Import fehlgeschlagen: ' + e.message); }
+  };
+  inp.click();
+}
+
+// ---------- Start ----------
+(async () => {
+  try { await loadAll(); } catch (e) { view().innerHTML = `<div class="card">Speicher nicht verfügbar: ${esc(e.message)}. Bitte nicht im privaten Modus öffnen.</div>`; return; }
+  try { if (navigator.storage?.persist && !(await navigator.storage.persisted())) await navigator.storage.persist(); } catch (e) { }
+  loadPins();
+  const start = (location.hash || '').slice(1);
+  go(routes[start] ? start : 'heute');
+  window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (routes[h] && h !== current) go(h); });
+})();
+window.__armoire = { S, saveItem, newItemBase, colorInfo, evaluate, suggest, countOutfitsWith, go, planTrip, geocode, deleteItem };
+</script>
+</body>
+</html>
