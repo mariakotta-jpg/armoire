@@ -167,7 +167,7 @@ hr{border:none;border-top:1px solid var(--line);margin:16px 0}
   <button data-go="heute"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Heute</button>
   <button data-go="schrank"><svg viewBox="0 0 24 24"><path d="M12 6a2 2 0 1 1 2-2M12 6v2l9 7a1.5 1.5 0 0 1-1 2.7H4a1.5 1.5 0 0 1-1-2.7l9-7"/></svg>Schrank</button>
   <button data-go="studio" class="center"><span class="ring"><svg viewBox="0 0 24 24"><path d="M5 9l7-5 7 5M5 15l7 5 7-5M3 12h18"/></svg></span>Studio</button>
-  <button data-go="capsule"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="7"/><path d="M5 12h14"/></svg>Capsule</button>
+  <button data-go="capsule"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="7"/><path d="M5 12h14"/></svg>Check</button>
   <button data-go="mehr"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>Mehr</button>
 </nav>
 <input type="file" id="filePick" accept="image/*" multiple class="hide">
@@ -834,7 +834,7 @@ function withSpinner(sh, text) { sh.el.innerHTML = `<div class="spin"></div><p c
 // =========================================================
 routes.heute = async () => {
   const v = view(); const d = new Date();
-  v.innerHTML = `<header class="mast"><div class="kicker">${fmtLong(d)}</div><h1>Le Look<br><em>du jour</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">${fmtLong(d)}</div><h1>Look of<br><em>the Day</em></h1></header>
   <div id="wx"></div>
   <div class="chips" id="occ">${OCC.map(o => `<button class="chip plum ${o.id === S.ui.occ ? 'on' : ''}" data-o="${o.id}" title="${o.d}">${o.name}</button>`).join('')}</div>
   <div id="planned"></div><div id="sugg"></div>
@@ -933,7 +933,7 @@ async function addWishFromSuggestion(m) {
 routes.schrank = async () => {
   const v = view(); const all = closet();
   const counts = Object.fromEntries(CATS.map(c => [c.id, all.filter(i => i.cat === c.id).length]));
-  v.innerHTML = `<header class="mast"><div class="kicker">${all.length} Teile · ${wishes().length} Wünsche</div><h1>Mon <em>Armoire</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">${all.length} Teile · ${wishes().length} Wünsche</div><h1>My <em>Wardrobe</em></h1></header>
     <div class="chips" id="cats"><button class="chip ${S.ui.cat === 'all' ? 'on' : ''}" data-c="all">Alle</button>${CATS.map(c => `<button class="chip ${S.ui.cat === c.id ? 'on' : ''}" data-c="${c.id}">${c.name} <span class="muted">${counts[c.id] || ''}</span></button>`).join('')}</div>
     <div class="chips" id="flt" style="padding-top:0">
       ${[['all', 'Ganzjährig + alle'], ['fs', 'Frühling/Sommer'], ['hw', 'Herbst/Winter']].map(([k, n]) => `<button class="chip ${S.ui.season === k ? 'on' : ''}" data-s="${k}">${n}</button>`).join('')}
@@ -1197,7 +1197,7 @@ routes.studio = async () => {
   if (st.preset) for (const id of st.preset) { const it = itemById(id); if (!it) continue; const s = slotOf(it); const i = (pools[s] || []).findIndex(x => x && x.id === id); if (i >= 0) { state.idx[s] = i; state.locks[s] = true; } }
   const current = () => ROWS().map(s => pools[s]?.[state.idx[s] ?? 0]).filter(Boolean);
   const lockSVG = on => `<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="${on ? 'M8 11V7a4 4 0 0 1 8 0v4' : 'M8 11V7a4 4 0 0 1 7.5-2'}"/></svg>`;
-  v.innerHTML = `<header class="mast" style="padding-bottom:4px"><div class="kicker">Wischen · Festhalten · Mischen</div><h1>Le <em>Studio</em></h1></header>
+  v.innerHTML = `<header class="mast" style="padding-bottom:4px"><div class="kicker">Wischen · Festhalten · Mischen</div><h1>The <em>Studio</em></h1></header>
     <div class="chips" id="sOcc"><button class="chip plum ${!state.occasion ? 'on' : ''}" data-o="">Alle Anlässe</button>${OCC.map(o => `<button class="chip plum ${o.id === state.occasion ? 'on' : ''}" data-o="${o.id}" title="${o.d}">${o.name}</button>`).join('')}</div>
     <div class="chips" style="padding-top:0"><button class="chip ${state.dress ? 'on' : ''}" id="tDress">Kleid statt Ober-/Unterteil</button><button class="chip ${state.includeWishes ? 'on' : ''}" id="tWish">Wunschteile anprobieren</button><button class="chip" id="tLooks">Meine Looks</button></div>
     <div id="rows"></div>
@@ -1319,7 +1319,8 @@ function stapleItems(season) {
 }
 routes.capsule = async () => {
   const v = view(); const se = S.ui.capSeason || currentSeason();
-  v.innerHTML = `<header class="mast"><div class="kicker">Weniger, aber besser</div><h1>La <em>Capsule</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">Was fehlt · Was kann weg</div><h1>Closet <em>Check</em></h1></header>
+    <p class="small muted" style="margin:-4px 0 12px">Im Schrank siehst du, <b>was du hast</b>. Der Check bewertet es: welche Teile dir für eine gute Capsule noch fehlen, was kaum kombinierbar ist und was du am meisten trägst – pro Saison.</p>
     <div class="chips"><button class="chip ${se === 'hw' ? 'on' : ''}" data-se="hw">Herbst / Winter</button><button class="chip ${se === 'fs' ? 'on' : ''}" data-se="fs">Frühling / Sommer</button></div>
     <div id="cap"><div class="spin"></div></div>`;
   $$('[data-se]').forEach(b => b.onclick = () => { S.ui.capSeason = b.dataset.se; go('capsule'); });
@@ -1377,7 +1378,7 @@ routes.capsule = async () => {
 // MEHR
 // =========================================================
 routes.mehr = () => {
-  view().innerHTML = `<header class="mast"><div class="kicker">Alles weitere</div><h1>Et <em>plus</em></h1></header>
+  view().innerHTML = `<header class="mast"><div class="kicker">Alles weitere</div><h1>And <em>more</em></h1></header>
   <div class="grid2">
     ${[['inspo', 'Pinterest & Ideen', 'Inspiration'], ['wunsch', 'Wunschliste & Kauf-Check', 'Shopping'], ['kalender', 'Kalender', 'Planen'], ['reisen', 'Reisen & Packliste', 'Unterwegs'], ['looks', 'Meine Looks', 'Gespeichert'], ['statistik', 'Statistik', 'Zahlen'], ['settings', 'Einstellungen', 'KI, Stadt, Backup']]
       .map(([r, t, k]) => `<button class="menu-tile" data-r="${r}"><span class="kicker">${k}</span><span class="t">${t}</span></button>`).join('')}
@@ -1389,7 +1390,7 @@ routes.mehr = () => {
 // ---------- Inspiration ----------
 routes.inspo = async () => {
   const v = view(); v.onclick = null;
-  v.innerHTML = `<header class="mast"><div class="kicker">Pinterest & eigene Bilder</div><h1>L'<em>Inspiration</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">Pinterest & eigene Bilder</div><h1>Inspi<em>ration</em></h1></header>
     <div class="card ${S.styleDNA ? 'forest' : ''}" id="dna"></div>
     <div class="chips"><button class="chip ${S.ui.inspoTab === 'pinterest' ? 'on' : ''}" data-t="pinterest">Pinterest</button><button class="chip ${S.ui.inspoTab === 'own' ? 'on' : ''}" data-t="own">Eigene (${S.inspo.length})</button><div class="spacer"></div><button class="chip" id="addInspo">+ Bild</button></div>
     <div id="ig"><div class="spin"></div></div>`;
@@ -1473,7 +1474,7 @@ async function analyzeDNA() {
 // ---------- Wunschliste & Kauf-Check ----------
 routes.wunsch = () => {
   const v = view(); v.onclick = null; const pool = closet(); const ws = wishes();
-  v.innerHTML = `<header class="mast"><div class="kicker">Erst denken, dann kaufen</div><h1>La <em>Wishlist</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">Erst denken, dann kaufen</div><h1>The <em>Wishlist</em></h1></header>
     <p class="muted">Fotografiere ein Teil im Laden, mach einen Screenshot im Shop oder füge einen Link ein – ich sage dir, ob es sich lohnt.</p>
     <button class="btn primary block" id="addW">+ Teil prüfen</button>
     <div id="wl" style="margin-top:12px"></div>`;
@@ -1523,7 +1524,7 @@ routes.kalender = async () => {
   const first = new Date(y, m, 1); const startOff = (first.getDay() + 6) % 7; const days = new Date(y, m + 1, 0).getDate();
   const cells = []; for (let i = 0; i < startOff; i++) cells.push(null); for (let d = 1; d <= days; d++) cells.push(new Date(y, m, d));
   const today = iso();
-  v.innerHTML = `<header class="mast"><div class="kicker">Planen & Tragen</div><h1>Le <em>Calendrier</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">Planen & Tragen</div><h1>The <em>Calendar</em></h1></header>
     <div class="row" style="margin:6px 0 10px"><button class="iconbtn" id="pm">‹</button><div class="spacer" style="text-align:center;font-family:var(--serif);font-size:22px">${MONTHS[m]} ${y}</div><button class="iconbtn" id="nm">›</button></div>
     <div class="cal">${['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(d => `<div class="dh">${d}</div>`).join('')}
     ${cells.map(d => { if (!d) return '<div></div>'; const k = iso(d); const p = S.plans[k]; return `<div class="d ${k === today ? 'today' : ''}" data-d="${k}">${d.getDate()}${p ? `<span class="mk ${p.worn ? 'worn' : ''}"></span>` : ''}</div>`; }).join('')}</div>
@@ -1571,7 +1572,7 @@ async function daySheet(date) {
 // ---------- Meine Looks ----------
 routes.looks = () => {
   const v = view(); v.onclick = null;
-  v.innerHTML = `<header class="mast"><div class="kicker">${S.outfits.length} gespeichert</div><h1>Mes <em>Looks</em></h1></header><div id="lk"></div>`;
+  v.innerHTML = `<header class="mast"><div class="kicker">${S.outfits.length} gespeichert</div><h1>My <em>Looks</em></h1></header><div id="lk"></div>`;
   $('#lk').innerHTML = S.outfits.length ? `<div class="grid2">${S.outfits.map((o, i) => { const its = o.itemIds.map(itemById).filter(Boolean); return `<div data-i="${i}" style="cursor:pointer">${collage(its)}<div class="small" style="margin-top:4px">${o.occasion ? OCCM[o.occasion]?.name + ' · ' : ''}${String(o.score || '').replace('.', ',')}/10</div></div>`; }).join('')}</div>` : emptyState('Noch keine Looks.', 'Stell im Studio ein Outfit zusammen und tippe auf das Herz.');
   $('#lk').onclick = e => {
     const c = e.target.closest('[data-i]'); if (!c) return; const o = S.outfits[+c.dataset.i]; const its = o.itemIds.map(itemById).filter(Boolean);
@@ -1588,7 +1589,7 @@ routes.looks = () => {
 // ---------- Reisen ----------
 routes.reisen = () => {
   const v = view(); v.onclick = null;
-  v.innerHTML = `<header class="mast"><div class="kicker">Städtetrips & Packliste</div><h1>Le <em>Voyage</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">Städtetrips & Packliste</div><h1>Travel <em>Plans</em></h1></header>
     <button class="btn primary block" id="nt">+ Neue Reise planen</button><div id="tl" style="margin-top:12px"></div>`;
   $('#nt').onclick = tripForm;
   $('#tl').innerHTML = S.trips.length ? [...S.trips].sort((a, b) => a.start < b.start ? 1 : -1).map(t => `<div class="list-item" data-id="${t.id}"><div style="flex:1"><b style="font-family:var(--serif);font-size:20px">${esc(t.city.name)}</b><div class="small muted">${fmtShort(parseISO(t.start))} – ${fmtShort(parseISO(t.end))} · ${t.packed.length} Teile · ${t.days.length} Tage</div></div><span>›</span></div>`).join('') : emptyState('Wohin geht\'s?', 'Ich plane mit dem Wetter vor Ort möglichst viele Outfits aus möglichst wenigen Teilen.');
@@ -1680,7 +1681,7 @@ routes.statistik = () => {
   const cpw = all.filter(i => i.price).map(i => ({ i, c: i.price / Math.max(1, (i.wears || []).length) })).sort((a, b) => b.c - a.c).slice(0, 6);
   const lv = { good: 0, ok: 0, bad: 0 }; all.forEach(i => lv[i._c.level]++);
   const maxCat = Math.max(1, ...CATS.map(c => all.filter(i => i.cat === c.id).length));
-  v.innerHTML = `<header class="mast"><div class="kicker">In Zahlen</div><h1>Les <em>Chiffres</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">In Zahlen</div><h1>By the <em>Numbers</em></h1></header>
     <div class="grid2">
       <div class="card" style="margin:0"><div class="kicker">Teile</div><div class="score">${all.length}</div></div>
       <div class="card" style="margin:0"><div class="kicker">Schrankwert</div><div class="score" style="font-size:30px">${value ? eur(value) : '–'}</div></div>
@@ -1707,7 +1708,7 @@ routes.settings = async () => {
   const v = view(); v.onclick = null;
   let persisted = false; try { persisted = await navigator.storage?.persisted?.(); } catch (e) { }
   let est = null; try { est = await navigator.storage?.estimate?.(); } catch (e) { }
-  v.innerHTML = `<header class="mast"><div class="kicker">Réglages</div><h1>Einstel<em>lungen</em></h1></header>
+  v.innerHTML = `<header class="mast"><div class="kicker">Einstellungen</div><h1>Set<em>tings</em></h1></header>
     <div class="card"><h3>KI (Google Gemini – gratis)</h3>
       <p class="small muted">1. Öffne <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> und melde dich mit Google an. 2. „API-Schlüssel erstellen“. 3. Hier einfügen. Der Schlüssel bleibt nur auf diesem iPhone. Hinweis: In der Gratis-Stufe darf Google die gesendeten Bilder zur Verbesserung nutzen; es gibt ein Tageslimit.</p>
       <label class="f">API-Schlüssel</label><input class="in" id="key" type="password" autocomplete="off" value="${esc(S.settings.apiKey)}" placeholder="AIza…">
