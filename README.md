@@ -1,4 +1,4 @@
-# Armoire
+# My Wardrobe
 
 Persönliche Kleiderschrank-App als PWA, eine einzige `index.html`, kostenlos über GitHub Pages.
 

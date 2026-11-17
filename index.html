@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Armoire</title>
+<title>My Wardrobe</title>
 <meta name="description" content="Dein Kleiderschrank, deine Outfits, deine Capsule.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Armoire">
+<meta name="apple-mobile-web-app-title" content="My Wardrobe">
 <meta name="theme-color" content="#F7F1E8">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
-<link rel="manifest" href='data:application/manifest+json,{"name":"Armoire","short_name":"Armoire","display":"standalone","background_color":"%23F7F1E8","theme_color":"%23F7F1E8","start_url":".","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png"}]}'>
+<link rel="manifest" href='data:application/manifest+json,{"name":"My Wardrobe","short_name":"My Wardrobe","display":"standalone","background_color":"%23F7F1E8","theme_color":"%23F7F1E8","start_url":".","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png"}]}'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Jost:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
@@ -179,7 +179,7 @@ hr{border:none;border-top:1px solid var(--line);margin:16px 0}
 
 <script type="module">
 /* =========================================================
-   Armoire – persönliche Kleiderschrank-PWA
+   My Wardrobe – persönliche Kleiderschrank-PWA
    Daten bleiben im Browser (IndexedDB). KI: Google Gemini (Gratis-Key).
    ========================================================= */
 
@@ -1767,7 +1767,7 @@ async function exportBackup() {
   const data = { app: 'armoire', version: 1, date: new Date().toISOString(), items, outfits: S.outfits, plans: Object.values(S.plans), trips: S.trips, inspo, kv: { settings: { ...S.settings, apiKey: '' }, styleDNA: S.styleDNA, rejected: S.rejected } };
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }); const name = `armoire-backup-${iso()}.json`;
   const file = new File([blob], name, { type: 'application/json' });
-  if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: 'Armoire Backup' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: 'My Wardrobe Backup' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 }
 function importBackup() {
@@ -1775,7 +1775,7 @@ function importBackup() {
   inp.onchange = async () => {
     const f = inp.files[0]; if (!f) return;
     try {
-      const d = JSON.parse(await f.text()); if (d.app !== 'armoire') throw new Error('Keine Armoire-Datei.');
+      const d = JSON.parse(await f.text()); if (d.app !== 'armoire') throw new Error('Keine My-Wardrobe-Backup-Datei.');
       if (!await confirmSheet(`Backup vom ${d.date?.slice(0, 10)} mit ${d.items.length} Teilen importieren? Vorhandene Teile mit gleicher ID werden überschrieben.`, 'Importieren')) return;
       for (const it of d.items) { if (typeof it.img === 'string' && it.img.startsWith('data:')) it.img = await dataURLToBlob(it.img); await DB.put('items', it); }
       for (const x of d.inspo || []) { x.img = await dataURLToBlob(x.img); await DB.put('inspo', x); }
