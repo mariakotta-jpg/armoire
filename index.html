@@ -234,6 +234,7 @@ const OCC = [
   { id: 'date', name: 'Date', d: 'Date-Night, Dinner zu zweit', f: [3, 5] },
   { id: 'event', name: 'Event', d: 'Party, Geburtstag, Hochzeit, Theater – Overdressing erlaubt', f: [4, 5] },
 ];
+const FARB_LINE = 'Farbtyp: Deep Autumn laut persönlicher Farbanalyse – gedeckte, warme, tiefe Töne. Beste Farben: Rost, Zimt, Ochsenblut, Bordeaux, Mahagoni, Schoko- und Kastanienbraun, Aubergine, Rosenholz, Terrakotta, Camel, Sand, Hafer, Bronze, Khaki, Tabak, Olive, Moosgrün, Waldgrün, Jadegrün, Salbei, Eukalyptus, Safran, Honig, Petrol, Schieferblau, Nachtblau. Lieblingskombis: Hafer+Oliv-Gold+Ochsenblut, Nude+Karamell+Dunkelgrün, Rosé-Taupe+Haselnuss+Schieferblau, Weinrot Ton in Ton, Aubergine+Waldgrün. Meiden: Reinweiß, Schwarz, Pastellrosa/Pink, Flieder/kühles Lila, kühle Grau- und Blaugrautöne, Neon.';
 const OCC_MIGRATE = { pilates: ['sport'], home: ['lounge'], trip: ['stadt'], restaurant_old: ['restaurant', 'cafe'] };
 const OCC_LINE = 'Anlässe: ' + 'Büro, Lounge/Zuhause, Sport (Pilates), Stadtbummel & Shopping, Café, Restaurant, Bar, Date, Event & Feier.';
 const OCCM = Object.fromEntries(OCC.map(o => [o.id, o]));
@@ -244,29 +245,42 @@ const FORMALITY = ['', 'Sportlich / Lounge', 'Casual / Street', 'Smart Casual', 
 const WARMTH = ['', 'sehr leicht', 'leicht', 'mittel', 'warm', 'sehr warm'];
 
 const DEFAULT_PROFILE = `Stil: Casual Chic. Liebt es, sich schick zu machen und gerne auch zu overdressen (hat dafür aktuell noch zu wenig Teile), trägt aber auch gern bequeme Streetwear.
-Farbtyp: Deep Autumn – gedeckte, warme, tiefe Farben. Ideal: Schokobraun, Espresso, Cognac, Camel, Rost, Terrakotta, Senf, Olive, Waldgrün, Petrol, Pflaume, Aubergine, Burgunder, Creme/Elfenbein statt Reinweiß. Ungünstig: Pastell, Neon, kühles Grau/Silber, Reinweiß, Fuchsia, Eisblau. Schwarz geht, Espresso schmeichelt mehr.
+${FARB_LINE}
 ${OCC_LINE}
 Capsule: saisonal (Frühling/Sommer, Herbst/Winter), aussortieren und gezielt Lücken füllen.
 Bewertung: ehrlich-direkt, keine Floskeln. Maßstab ist IHR Stil; Trends nur als leichter Bonus.`;
 
-// Deep-Autumn-Farbwelt
+// Persönliche Farbanalyse (Deep Autumn) – aus „Color Analysis.pdf“
 const PAL_GOOD = [
-  ['Schokobraun', '#4A2C22'], ['Espresso', '#36251D'], ['Cognac', '#9A5B2E'], ['Rost', '#9E4426'], ['Terrakotta', '#B35A38'],
-  ['Senf', '#C39A2E'], ['Olive', '#5D6531'], ['Moosgrün', '#646A3A'], ['Waldgrün', '#2F4B3A'], ['Flaschengrün', '#234235'],
-  ['Petrol', '#1F4F5B'], ['Pflaume', '#5B2A45'], ['Aubergine', '#47243A'], ['Burgunder', '#6A1F2E'], ['Ziegelrot', '#A3392B'],
-  ['Camel', '#B08453'], ['Karamell', '#C08A4E'], ['Creme', '#EEE3CC'], ['Elfenbein', '#F1E8D6'], ['Haferbeige', '#D9C7A7'],
-  ['Taupe', '#85725F'], ['Khaki', '#8C8456'], ['Kupfer', '#B0683A'], ['Bronze', '#8C6A3A'], ['Kürbis', '#C2662D'],
-  ['Dunkle Jeans', '#2C3A52'], ['Tomatenrot', '#A8322D'], ['Dunkeltürkis', '#1E5752'],
+  ['Rost', '#893B12'], ['Zimt', '#8B532E'], ['Ochsenblut', '#5A1307'], ['Marsala', '#864441'], ['Chili', '#861B08'], ['Bordeaux', '#6E1C32'],
+  ['Mahagoni', '#7C4337'], ['Kakao', '#7F564B'], ['Kastanie', '#612315'], ['Schokobraun', '#532F24'], ['Rotbraun', '#653216'], ['Haselnuss', '#83563C'],
+  ['Rosenholz', '#8E6564'], ['Mauve', '#89555F'], ['Ziegel', '#854E44'], ['Aubergine', '#512D34'], ['Altbeere', '#8F595A'], ['Maronenbraun', '#5B342C'],
+  ['Terrakotta', '#A97353'], ['Toffee', '#AB8268'], ['Rosé-Taupe', '#A3847B'], ['Koralle gedeckt', '#A9695E'], ['Altrosa', '#AD7E75'], ['Nude', '#B2938B'],
+  ['Pfirsich-Camel', '#CC9F7A'], ['Sand', '#CBAB91'], ['Rosé-Beige', '#CAB5A9'], ['Camel', '#A87F59'], ['Milchkaffee', '#A58671'], ['Greige', '#A69586'],
+  ['Bronze', '#836C3E'], ['Khaki', '#807052'], ['Taupe', '#827868'], ['Tabak', '#4D3E1C'], ['Walnuss', '#584934'], ['Graubraun', '#5C5346'],
+  ['Olive', '#71704C'], ['Steinoliv', '#726F5B'], ['Dunkeloliv', '#504E25'], ['Moosgrün', '#636444'], ['Raucholiv', '#49493B'], ['Nachtoliv', '#282717'],
+  ['Stroh', '#C1B88C'], ['Hafer', '#C2BBA2'], ['Matcha', '#A8A277'], ['Stein', '#A09984'], ['Champagner', '#BDAF87'], ['Messing', '#A69767'],
+  ['Oliv hell', '#828255'], ['Farngrün', '#454F30'], ['Salbei', '#7A8365'], ['Jadegrün', '#53765D'], ['Waldgrün', '#1B371A'], ['Eukalyptus', '#708676'],
+  ['Safran', '#CBB96C'], ['Goldsand', '#B8A36F'], ['Honig', '#C7B274'], ['Antikgold', '#7E6C46'], ['Oliv-Gold', '#9A8A5F'], ['Moosgold', '#71673E'],
+  ['Schieferblau', '#4C6472'], ['Teal gedeckt', '#608384'], ['Nachtblau', '#193039'], ['Petrol', '#284C4F'], ['Taubenblau', '#4F7182'], ['Jeansblau', '#46637B'],
 ];
+// nicht in der Analyse, aber neutral tragbar
 const PAL_OK = [
-  ['Schwarz', '#141414'], ['Marine', '#1F2A44'], ['Anthrazit', '#3A3A3A'], ['Jeansblau', '#4A6488'], ['Weiß', '#FAFAFA'],
-  ['Mittelgrau', '#8A8A8A'], ['Steingrau', '#9C9184'], ['Rosenholz', '#A8665F'], ['Altrosa', '#B98585'], ['Salbei', '#8F9A7A'],
-  ['Helle Jeans', '#7F9AB8'], ['Beige', '#E2D3BC'], ['Rot', '#B3202A'],
+  ['Creme', '#EEE3CC'], ['Elfenbein', '#F1E8D6'], ['Beige', '#E2D3BC'], ['Marine', '#1F2A44'], ['Dunkle Jeans', '#2C3A52'], ['Helle Jeans', '#7F9AB8'],
+  ['Anthrazit', '#3A3A3A'], ['Senf', '#C39A2E'], ['Kürbis', '#C2662D'], ['Rot', '#B3202A'], ['Pflaume', '#5B2A45'],
 ];
+// „Zu vermeidende Farben“ aus der Analyse + allgemein Unpassendes
 const PAL_BAD = [
-  ['Babyrosa', '#F6C9D0'], ['Babyblau', '#BCD6EE'], ['Flieder', '#CDB8E3'], ['Mint', '#BDE8D2'], ['Neongelb', '#E6F13A'],
-  ['Neonpink', '#FF3EA5'], ['Fuchsia', '#D9268C'], ['Eisblau', '#D7EEF7'], ['Silbergrau', '#C3C7CC'], ['Kühles Lila', '#7B4FC9'],
-  ['Königsblau', '#2448C9'], ['Neonorange', '#FF7A00'], ['Pastellgelb', '#F7EBA5'], ['Knalltürkis', '#18C6C6'], ['Hellgrau kühl', '#D9DCE0'],
+  ['Weiß', '#F7F7F7'], ['Zartlila', '#F4E9F5'], ['Hellrosa', '#F8DEEF'], ['Bonbonrosa', '#F6C1E2'], ['Pink', '#F6B7DD'], ['Flieder', '#D9C4DD'],
+  ['Kühles Mauve', '#BB9DBA'], ['Kühles Beerenlila', '#AE81A0'], ['Eisgrau', '#ADBDC2'], ['Kühles Hellgrau', '#99A4AC'], ['Blaugrau', '#858C96'],
+  ['Schiefergrau', '#646B71'], ['Mittelgrau', '#757B7F'], ['Silbergrau', '#919493'], ['Schwarz', '#000000'],
+  ['Babyblau', '#BCD6EE'], ['Mint', '#BDE8D2'], ['Neongelb', '#E6F13A'], ['Neonpink', '#FF3EA5'], ['Fuchsia', '#D9268C'], ['Eisblau', '#D7EEF7'],
+  ['Kühles Lila', '#7B4FC9'], ['Königsblau', '#2448C9'], ['Neonorange', '#FF7A00'], ['Pastellgelb', '#F7EBA5'], ['Knalltürkis', '#18C6C6'],
+];
+// „Farbkombinationen“ aus der Analyse
+const PAL_COMBOS = [
+  ['#BFB8A2', '#A2935F', '#6C1304'], ['#C5A58C', '#CA986E', '#28453C'], ['#AD9088', '#9F7A62', '#405A6B'],
+  ['#6C0F17', '#461D23', '#460903'], ['#6B4248', '#284429'],
 ];
 
 // ---------- Farbmathematik ----------
@@ -301,11 +315,11 @@ function colorInfo(hex) {
   return { lab, L, chroma, hue, name: best.n, level, neutral, dist: bd };
 }
 function colorNote(info) {
-  if (info.name === 'Schwarz' && info.level === 'ok') return 'Schwarz geht – Espresso oder Schokobraun schmeicheln dir aber mehr.';
-  if (info.name === 'Weiß' && info.level === 'ok') return 'Reinweiß ist hart für dich – Creme oder Elfenbein wirken weicher.';
-  if (info.level === 'good') return 'Steht dir – klassisch Deep Autumn.';
+  if (info.name === 'Schwarz' && info.level === 'bad') return 'Laut deiner Farbanalyse meiden – Nachtoliv, Schokobraun oder Nachtblau sind dein Schwarz.';
+  if (info.name === 'Weiß' && info.level === 'bad') return 'Laut deiner Farbanalyse meiden – Hafer, Sand oder Rosé-Beige sind dein Weiß.';
+  if (info.level === 'good') return 'Steht dir – eine deiner besten Farben laut Farbanalyse.';
   if (info.level === 'ok') return 'Geht – mit warmen, tiefen Tönen kombinieren und nicht direkt am Gesicht tragen.';
-  return 'Nicht dein Farbtyp – macht dich blass. Höchstens weit weg vom Gesicht (Hose, Schuhe).';
+  return 'Steht laut deiner Farbanalyse auf der Meiden-Liste – macht dich blass. Höchstens weit weg vom Gesicht (Hose, Schuhe).';
 }
 const LVL_ICON = { good: '✓', ok: '◐', bad: '✕' };
 const LVL_TXT = { good: 'steht dir', ok: 'geht', bad: 'eher nicht' };
@@ -352,7 +366,7 @@ async function loadAll() {
   S.items = items.map(enrich); S.outfits = outfits; S.trips = trips; S.inspo = inspo;
   S.plans = Object.fromEntries(plans.map(p => [p.date, p]));
   for (const { k, v } of kv) {
-    if (k === 'settings') S.settings = { ...S.settings, ...v };
+    if (k === 'settings') { S.settings = { ...S.settings, ...v }; if (/^Farbtyp: Deep Autumn – gedeckte/m.test(S.settings.profile || '')) { S.settings.profile = S.settings.profile.replace(/^Farbtyp: Deep Autumn – gedeckte.*$/m, FARB_LINE); kvSave('settings', S.settings); } }
     if (k === 'styleDNA') S.styleDNA = v;
     if (k === 'rejected') S.rejected = v;
   }
@@ -584,10 +598,14 @@ const CRIT_SCHEMA = {
 // ---------- Stil-Regeln (lokal, ohne KI) ----------
 function seasonOK(a, b) { if (!a.seasons?.length || !b.seasons?.length) return true; return a.seasons.some(s => b.seasons.includes(s)); }
 function hueDiff(a, b) { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; }
+const COMBO_LABS = PAL_COMBOS.map(c => c.map(labOf));
+function comboIdx(item) { const r = []; COMBO_LABS.forEach((c, i) => { if (c.some(l => dE(item._c.lab, l) < 16)) r.push(i); }); return r; }
+function inCombo(a, b) { if (dE(a._c.lab, b._c.lab) < 8) return false; const ia = comboIdx(a); return ia.length && comboIdx(b).some(i => ia.includes(i)); }
 function pairScore(a, b) {
   const pa = a.pattern && a.pattern !== 'uni' && a.pattern !== 'strukturiert', pb = b.pattern && b.pattern !== 'uni' && b.pattern !== 'strukturiert';
   if (pa && pb) return 0.3;
   const ca = a._c, cb = b._c;
+  if (inCombo(a, b)) return 1;
   if (ca.neutral || cb.neutral) return 1;
   const hd = hueDiff(ca.hue, cb.hue);
   if (hd <= 40) return 0.95;                 // Ton in Ton / analog
@@ -644,8 +662,12 @@ function evaluate(items, ctx = {}) {
   let farbe = 10;
   for (const it of items) {
     const s = slotOf(it);
-    if (it._c.level === 'ok' && ['top', 'dress'].includes(s) && ['Schwarz', 'Weiß'].includes(it._c.name)) { farbe -= 0.5; notes.push(it._c.name === 'Schwarz' ? `Schwarz direkt am Gesicht ist okay – Espresso oder Schoko würden dich mehr strahlen lassen.` : `Reinweiß am Gesicht ist hart für dich – Creme wäre weicher.`); }
-    if (it._c.level === 'bad') { const nearFace = ['top', 'mid', 'outer', 'dress'].includes(s); farbe -= nearFace ? 3 : 1.5; notes.push(`${it.name || 'Ein Teil'} in ${it.colorName || it._c.name} ist nicht dein Deep-Autumn-Ton${nearFace ? ' – und dann noch direkt am Gesicht' : ''}.`); }
+    if (it._c.level === 'bad') {
+      const nearFace = ['top', 'mid', 'outer', 'dress'].includes(s), acc = ['shoes', 'bag'].includes(s);
+      farbe -= nearFace ? 3 : acc ? 0.5 : 1.5;
+      const alt = it._c.name === 'Schwarz' ? ' Statt Schwarz: Nachtoliv, Schoko oder Nachtblau.' : it._c.name === 'Weiß' ? ' Statt Weiß: Hafer, Sand oder Rosé-Beige.' : '';
+      if (!acc || ['Schwarz', 'Weiß'].includes(it._c.name)) notes.push(`${it.name || 'Ein Teil'} in ${it.colorName || it._c.name} steht auf deiner Meiden-Liste${nearFace ? ' – und dann noch direkt am Gesicht' : ''}.${alt}`);
+    }
   }
   let worst = 1, wa = null, wb = null;
   for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) { const p = pairScore(items[i], items[j]); if (p < worst) { worst = p; wa = items[i]; wb = items[j]; } }
@@ -653,6 +675,8 @@ function evaluate(items, ctx = {}) {
   const accents = items.filter(i => !i._c.neutral);
   const hues = []; for (const a of accents) if (!hues.some(h => hueDiff(h, a._c.hue) < 30)) hues.push(a._c.hue);
   if (hues.length > 2) { farbe -= 2; notes.push('Zu viele Farben auf einmal – maximal zwei Akzente, der Rest neutral.'); }
+  { let hit = false; for (let i = 0; i < items.length && !hit; i++) for (let j = i + 1; j < items.length; j++) if (inCombo(items[i], items[j])) { hit = true; break; }
+    if (hit) { farbe = Math.min(10, farbe + 0.5); notes.push('✓ Eine deiner Kombinationen aus der Farbanalyse.'); } }
   if (!accents.length && items.length >= 3) { farbe -= 0.5; notes.push('Alles neutral – elegant, aber ein Akzent in Pflaume, Rost oder Olive würde den Look heben.'); }
   // Stimmigkeit
   const fs = items.map(i => i.formality || 2); const spread = Math.max(...fs) - Math.min(...fs);
@@ -899,7 +923,7 @@ async function rateSelfie() {
     const res = await gemini({
       system: SYS_STYLIST(), schema: CRIT_SCHEMA, parts: [part, {
         text: `Bewerte dieses Outfit-Foto (Spiegelselfie) ehrlich-direkt auf einer Skala von 1–10 (Dezimal erlaubt). Anlass: ${OCCM[S.ui.occ].name}.
-parts: bewerte Farbe (passt es zu Deep Autumn?), Silhouette & Proportion, Stil-Stimmigkeit, Anlass – jeweils 1-10 mit einem knackigen Satz.
+parts: bewerte Farbe (passt es zu ihrer persönlichen Farbanalyse im Profil?), Silhouette & Proportion, Stil-Stimmigkeit, Anlass – jeweils 1-10 mit einem knackigen Satz.
 swaps: schlage bis zu 3 konkrete Teile AUS IHREM SCHRANK vor, die den Look verbessern würden (addId = ID aus der Liste, removeId leer lassen). Nur IDs aus der Liste!
 missing: bis zu 2 Teile, die ihr fehlen und diesen Look perfekt machen würden.
 trend: ein kurzer Satz, ob/wie es zu aktuellen Trends passt (nur als Bonus).
@@ -1275,7 +1299,7 @@ routes.studio = async () => {
     try {
       const parts = []; for (const it of items) { parts.push({ text: `Teil ${it.id} (${SLOT_NAMES[slotOf(it)]}: ${it.name}, ${it.colorName || it._c.name}):` }); parts.push(await imgPart(it.img instanceof Blob ? it.img : await (await fetch(imgURL(it))).blob(), 384)); }
       parts.push({ text: `Bewerte dieses zusammengestellte Outfit ehrlich-direkt (1–10, Dezimal erlaubt)${state.occasion ? ' für den Anlass ' + OCCM[state.occasion].name : ''}${state.temp != null ? ', gefühlte Temperatur ' + Math.round(state.temp) + '°C' : ''}.
-parts: Farbe (Deep Autumn & Harmonie), Silhouette & Proportion, Stil-Stimmigkeit, Anlass – je 1-10 + ein knackiger Satz.
+parts: Farbe (persönliche Farbanalyse & Harmonie), Silhouette & Proportion, Stil-Stimmigkeit, Anlass – je 1-10 + ein knackiger Satz.
 swaps: bis zu 3 konkrete Tauschvorschläge aus ihrem Schrank: removeId = ID eines Teils aus dem Outfit (oder leer, wenn etwas ergänzt werden soll), addId = ID aus dem Schrank. Nur echte IDs!
 missing: bis zu 2 Teile, die ihr fehlen und den Look perfekt machen würden. trend: ein Satz Trend-Bonus. headline: verspielte Magazin-Überschrift. verdict: 2-3 Sätze ehrliches Fazit.
 Ihr Schrank (id|Kategorie|Name|Farbe|Muster|Formalität|Wärme|Saison):
@@ -1301,20 +1325,20 @@ ${closetSummary(320, state.includeWishes)}` });
 const STAPLES = {
   hw: [
     ['outer', 'Camel-Wollmantel', '#B08453', 4, 5], ['outer', 'Braune Lederjacke', '#4A2C22', 2, 4], ['mid', 'Schokobrauner Blazer', '#4A2C22', 4, 3],
-    ['mid', 'Olive Strickjacke', '#5D6531', 2, 4], ['top_l', 'Creme Strickpullover', '#EEE3CC', 2, 4], ['top_l', 'Espresso Rollkragen', '#36251D', 3, 3],
-    ['top_l', 'Pflaume Feinstrick', '#5B2A45', 3, 3], ['top_l', 'Creme Bluse', '#F1E8D6', 4, 2], ['top_l', 'Olive Hoodie (Street)', '#646A3A', 1, 4],
+    ['mid', 'Olive Strickjacke', '#5D6531', 2, 4], ['top_l', 'Hafer Strickpullover', '#C2BBA2', 2, 4], ['top_l', 'Espresso Rollkragen', '#36251D', 3, 3],
+    ['top_l', 'Pflaume Feinstrick', '#5B2A45', 3, 3], ['top_l', 'Sandfarbene Bluse', '#CBAB91', 4, 2], ['top_l', 'Olive Hoodie (Street)', '#646A3A', 1, 4],
     ['pants_l', 'Dunkle Straight Jeans', '#2C3A52', 2, 3], ['pants_l', 'Weite Bundfaltenhose Schoko', '#4A2C22', 4, 3], ['pants_l', 'Wollhose Camel', '#B08453', 4, 4],
     ['skirt', 'Satin-Midirock Pflaume', '#5B2A45', 4, 2], ['dress', 'Strickkleid Schoko', '#4A2C22', 3, 4], ['dress', 'Slipdress Burgunder (Bar)', '#6A1F2E', 5, 1],
     ['shoes', 'Braune Loafer', '#4A2C22', 3, 3], ['shoes', 'Stiefeletten Cognac', '#9A5B2E', 3, 4], ['shoes', 'Kniehohe Stiefel Espresso', '#36251D', 4, 4],
-    ['shoes', 'Creme Sneaker', '#EEE3CC', 2, 3], ['shoes', 'Spitze Pumps Burgunder', '#6A1F2E', 5, 2], ['bag', 'Cognac Shopper', '#9A5B2E', 3, 3], ['bag', 'Mini-Abendtasche Pflaume', '#5B2A45', 5, 3],
+    ['shoes', 'Sneaker Hafer', '#C2BBA2', 2, 3], ['shoes', 'Spitze Pumps Burgunder', '#6A1F2E', 5, 2], ['bag', 'Cognac Shopper', '#9A5B2E', 3, 3], ['bag', 'Mini-Abendtasche Pflaume', '#5B2A45', 5, 3],
   ],
   fs: [
-    ['outer', 'Trenchcoat Camel', '#B08453', 3, 3], ['mid', 'Leinenblazer Haferbeige', '#D9C7A7', 4, 2], ['mid', 'Feinstrick-Cardigan Rost', '#9E4426', 2, 2],
-    ['top_s', 'Creme T-Shirt (Premium)', '#EEE3CC', 2, 1], ['top_s', 'Tanktop Schoko', '#4A2C22', 2, 1], ['top_l', 'Leinenhemd Olive', '#5D6531', 3, 2],
-    ['top_s', 'Satin-Top Senf', '#C39A2E', 4, 1], ['pants_l', 'Leinenhose Creme', '#EEE3CC', 3, 1], ['pants_l', 'Weite Jeans dunkel', '#2C3A52', 2, 2],
+    ['outer', 'Trenchcoat Camel', '#B08453', 3, 3], ['mid', 'Leinenblazer Hafer', '#C2BBA2', 4, 2], ['mid', 'Feinstrick-Cardigan Rost', '#9E4426', 2, 2],
+    ['top_s', 'T-Shirt Hafer (Premium)', '#C2BBA2', 2, 1], ['top_s', 'Tanktop Schoko', '#4A2C22', 2, 1], ['top_l', 'Leinenhemd Olive', '#5D6531', 3, 2],
+    ['top_s', 'Satin-Top Senf', '#C39A2E', 4, 1], ['pants_l', 'Leinenhose Sand', '#CBAB91', 3, 1], ['pants_l', 'Weite Jeans dunkel', '#2C3A52', 2, 2],
     ['pants_s', 'Bermuda Khaki', '#8C8456', 2, 1], ['skirt', 'Midirock Terrakotta', '#B35A38', 3, 1], ['dress', 'Sommerkleid Rost', '#9E4426', 3, 1],
     ['dress', 'Satin-Slipdress Waldgrün (Bar)', '#2F4B3A', 5, 1], ['shoes', 'Sandaletten Cognac', '#9A5B2E', 3, 1], ['shoes', 'Ballerinas Schoko', '#4A2C22', 3, 2],
-    ['shoes', 'Creme Sneaker', '#EEE3CC', 2, 2], ['shoes', 'Riemchen-Heels Bronze', '#8C6A3A', 5, 1], ['bag', 'Raffia-Tasche', '#D9C7A7', 2, 2], ['bag', 'Cognac Schultertasche', '#9A5B2E', 3, 2],
+    ['shoes', 'Sneaker Hafer', '#C2BBA2', 2, 2], ['shoes', 'Riemchen-Heels Bronze', '#8C6A3A', 5, 1], ['bag', 'Raffia-Tasche', '#D9C7A7', 2, 2], ['bag', 'Cognac Schultertasche', '#9A5B2E', 3, 2],
   ],
 };
 function stapleItems(season) {
